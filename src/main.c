@@ -12,10 +12,6 @@
 
 #include "audioMoth.h"
 
-/* Logs file */
-#define LOGS_FILE                           "logs.txt"
-#define STARTUP_MESSAGE                     "Loop started\n"
-
 /* Sleep and LED constants */
 
 #define DEFAULT_WAIT_INTERVAL               1
@@ -361,17 +357,6 @@ static void copyToBackupDomain(uint32_t *dst, uint8_t *src, uint32_t length) {
 
 }
 
-static void logMsg(char * msg){
-    AudioMoth_appendFile(LOGS_FILE);
-    AudioMoth_writeToFile(msg, strlen(msg));
-    AudioMoth_closeFile(); 
-}
-
-static void initialiseLogFile(){
-    AudioMoth_enableFileSystem();
-    logMsg(STARTUP_MESSAGE);
-}
-
 /* Main function */
 
 int main(void) {
@@ -380,40 +365,141 @@ int main(void) {
 
     AudioMoth_initialise();
 
-    /* Check the switch position */
-
     AM_switchPosition_t switchPosition = AudioMoth_getSwitchPosition();
 
-    if (switchPosition == AM_SWITCH_USB) {
+    if (AudioMoth_isInitialPowerUp()) {
 
-        /* Handle the case that the switch is in USB position. Waits in low energy state until USB disconnected or switch moved  */
+        *timeOfNextRecording = 0;
 
-        AudioMoth_handleUSB();
+        *durationOfNextRecording = 0;
+
+        *previousSwitchPosition = AM_SWITCH_NONE;
+
+        copyToBackupDomain((uint32_t*)configSettings, (uint8_t*)&defaultConfigSettings, sizeof(configSettings_t));
 
     } else {
 
-        /* Set up log file */
-        initialiseLogFile(); 
+        /* Indicate battery state is not initial power up and switch has been moved into USB if enabled */
 
-        /* Flash both LED */
+        if (switchPosition != *previousSwitchPosition && switchPosition == AM_SWITCH_USB && !configSettings->disableBatteryLevelDisplay) {
 
-        AudioMoth_setRedLED(true);
-        AudioMoth_setGreenLED(false);
-        logMsg("Red led on\n");
-        AudioMoth_delay(100);
+            flashLedToIndicateBatteryLife();
 
-        AudioMoth_setRedLED(false);
-        AudioMoth_setGreenLED(true);
-        logMsg("Green led on\n");
-        AudioMoth_delay(100);
+        }
+
     }
 
-    /* Power down and wake up in one second */
+    /* Handle the case that the switch is in USB position  */
 
-    AudioMoth_powerDownAndWake(1, true);
+    if (switchPosition == AM_SWITCH_USB) {
+
+        AudioMoth_handleUSB();
+
+        SAVE_SWITCH_POSITION_AND_POWER_DOWN(DEFAULT_WAIT_INTERVAL);
+
+    }
+
+    /* Handle the case that the switch is in CUSTOM position but the time has not been set */
+
+    if (switchPosition == AM_SWITCH_CUSTOM && (AudioMoth_hasTimeBeenSet() == false || configSettings->activeStartStopPeriods == 0)) {
+
+        FLASH_LED(Both, SHORT_LED_FLASH_DURATION)
+
+        SAVE_SWITCH_POSITION_AND_POWER_DOWN(DEFAULT_WAIT_INTERVAL);
+
+    }
+
+    /* Calculate time of next recording if switch has changed position */
+
+    uint32_t currentTime;
+
+    AudioMoth_getTime(&currentTime, NULL);
+
+    if (switchPosition != *previousSwitchPosition) {
+
+         if (switchPosition == AM_SWITCH_DEFAULT) {
+
+             /* Set parameters to start recording now */
+
+             *timeOfNextRecording = currentTime;
+
+             *durationOfNextRecording = configSettings->recordDuration;
+
+         } else {
+
+             /* Determine starting time and duration of next recording */
+
+             scheduleRecording(currentTime, timeOfNextRecording, durationOfNextRecording);
+
+         }
+
+    }
+
+    /* Make recording if appropriate */
+
+    bool enableLED = (switchPosition == AM_SWITCH_DEFAULT) || configSettings->enableLED;
+
+    if (currentTime >= *timeOfNextRecording) {
+
+        /* Make recording is battery check is disabled or enabled and okay */
+
+        AM_recordingState_t recordingState = RECORDING_OKAY;
+
+        AM_batteryState_t batteryState = AudioMoth_getBatteryState();
+
+        if (!configSettings->enableBatteryCheck || batteryState > AM_BATTERY_LOW) {
+
+            recordingState = makeRecording(currentTime, *durationOfNextRecording, enableLED, batteryState);
+
+        } else if (enableLED) {
+
+            FLASH_LED(Both, LONG_LED_FLASH_DURATION);
+
+        }
+
+        /* Schedule next recording */
+
+		if (switchPosition == AM_SWITCH_DEFAULT) {
+
+			/* Set parameters to start recording after sleep period */
+
+			if (recordingState != SWITCH_CHANGED) {
+
+				*timeOfNextRecording = currentTime + configSettings->recordDuration + configSettings->sleepDuration;
+
+			}
+
+		} else {
+
+			/* Determine starting time and duration of next recording */
+
+			scheduleRecording(currentTime, timeOfNextRecording, durationOfNextRecording);
+
+		}
+
+    } else if (enableLED) {
+
+        /* Flash LED to indicate waiting */
+
+        FLASH_LED(Green, WAITING_LED_FLASH_DURATION);
+
+    }
+
+    /* Determine how long to power down */
+
+    uint32_t secondsToSleep = 0;
+
+    if (*timeOfNextRecording > currentTime) {
+
+        secondsToSleep = MIN(*timeOfNextRecording - currentTime, WAITING_LED_FLASH_INTERVAL);
+
+    }
+
+    /* Power down */
+
+    SAVE_SWITCH_POSITION_AND_POWER_DOWN(secondsToSleep);
 
 }
-
 
 /* Time zone handler */
 

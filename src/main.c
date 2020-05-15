@@ -3,6 +3,9 @@
  * openacousticdevices.info
  * June 2017
  *****************************************************************************/
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <time.h>
 #include <stdio.h>
@@ -874,3 +877,7 @@ static void flashLedToIndicateBatteryLife(void){
     }
 
 }
+
+#ifdef __cplusplus
+}
+#endif

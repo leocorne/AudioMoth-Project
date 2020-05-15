@@ -3,7 +3,9 @@
  * openacousticdevices.info
  * June 2017
  *****************************************************************************/
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <time.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -2097,3 +2099,6 @@ void AudioMoth_setupSWOForPrint(void) {
   ITM->TER  = 0x1;
 
 }
+#ifdef __cplusplus
+}
+#endif

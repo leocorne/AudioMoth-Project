@@ -12,6 +12,7 @@
 
 #include "audioMoth.h"
 #include "cpptest.h"
+#include "tensorflow/lite/micro/examples/hello_world/foldertest.h"
 
 /* Logs file */
 #define LOGS_FILE                           "logs.txt"
@@ -397,15 +398,38 @@ int main(void) {
         /* Test if C++ compiler is working */
         if(cppTest() == 0){
             logMsg("C++ compiler working \n");
-            FLASH_LED(Green, SHORT_LED_FLASH_DURATION);
+            FLASH_LED(Green, LONG_LED_FLASH_DURATION);
         }
         else{
             logMsg("C compiler only \n");
-            FLASH_LED(Red, SHORT_LED_FLASH_DURATION);
+            FLASH_LED(Red, LONG_LED_FLASH_DURATION);
         }
+        AudioMoth_delay(100);
+
+        /* Test if tensorflow folder was imported correctly */
+        if(folderTest() == 0){
+            logMsg("TF folder import successful \n");
+            FLASH_LED(Green, LONG_LED_FLASH_DURATION);
+        }
+        else{
+            logMsg("TF folder import failed \n");
+            FLASH_LED(Red, LONG_LED_FLASH_DURATION);
+        }
+        AudioMoth_delay(100);
+
+        /* Test if main_functions file was imported correctly */
+        if(importTest() == 0){
+            logMsg("main_functions import successful \n");
+            FLASH_LED(Green, LONG_LED_FLASH_DURATION);
+        }
+        else{
+            logMsg("main_functions import failed \n");
+            FLASH_LED(Red, LONG_LED_FLASH_DURATION);
+        }
+        AudioMoth_delay(100);
 
         /* Flash both LEDs at the end of tests */
-        AudioMoth_delay(200);
+        AudioMoth_delay(500);
         AudioMoth_setBothLED(true);
         AudioMoth_delay(100);
         AudioMoth_setBothLED(false);

@@ -27,6 +27,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>tensorflow</name>
+			<type>2</type>
+			<location>C:/Users/leoco/OneDrive/Documents/Oxford/Project/src/tensorflow</location>
+		</link>
+		<link>
 			<name>drivers/dmactrl.c</name>
 			<type>1</type>
 			<locationURI>STUDIO_SDK_LOC/hardware/kit/common/drivers/dmactrl.c</locationURI>

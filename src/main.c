@@ -11,11 +11,11 @@
 #include <stdbool.h>
 
 #include "audioMoth.h"
-#include "one.h"
+#include "cpptest.h"
 
 /* Logs file */
 #define LOGS_FILE                           "logs.txt"
-#define STARTUP_MESSAGE                     "Loop started\n"
+#define STARTUP_MESSAGE                     "\n\n ********Loop started********\n"
 
 /* Sleep and LED constants */
 
@@ -380,22 +380,13 @@ int main(void) {
 
     AudioMoth_initialise();
 
-    // if( inference_count == 0){
-    //     logMsg("found c++ code");
-    // }
-
     /* Check the switch position */
 
     AM_switchPosition_t switchPosition = AudioMoth_getSwitchPosition();
 
-    // if (AudioMoth_isInitialPowerUp()) {
-    //     initialiseHeader();
-    // }
-
     if (switchPosition == AM_SWITCH_USB) {
 
         /* Handle the case that the switch is in USB position. Waits in low energy state until USB disconnected or switch moved  */
-
         AudioMoth_handleUSB();
 
     } else {
@@ -403,17 +394,24 @@ int main(void) {
         /* Set up log file */
         initialiseLogFile();
 
-        if(one() == 1){logMsg("C++ compiler working \n");}
-        else{logMsg("C compiler only \n");}
+        /* Test if C++ compiler is working */
+        if(cppTest() == 0){
+            logMsg("C++ compiler working \n");
+            FLASH_LED(Green, SHORT_LED_FLASH_DURATION);
+        }
+        else{
+            logMsg("C compiler only \n");
+            FLASH_LED(Red, SHORT_LED_FLASH_DURATION);
+        }
 
-
+        /* Flash both LEDs at the end of tests */
+        AudioMoth_delay(200);
         AudioMoth_setBothLED(true);
         AudioMoth_delay(100);
         AudioMoth_setBothLED(false);
     }
 
     /* Power down and wake up in one second */
-
     AudioMoth_powerDownAndWake(1, true);
 
 }

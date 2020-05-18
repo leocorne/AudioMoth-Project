@@ -5,16 +5,16 @@
 
 #ifdef __cplusplus
 extern "C" {
-    #include "one.h"
-    int one(){
-        return 1;
+    #include "cpptest.h"
+    int cppTest(){
+        return 0;
     }
 }
 #endif
 
 #ifndef __cplusplus
 #include "one.h"
-int one(){
-    return 2;
+int cppTest(){
+    return 1;
 }
 #endif

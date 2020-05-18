@@ -7,6 +7,7 @@
 #include <stdbool.h>
 
 #include "audioMoth.h"
+#include "one.h"
 
 /* Firmware version and description */
 
@@ -60,14 +61,23 @@ int main(void) {
         AudioMoth_handleUSB();
 
     } else {
+        if (one() == 1){
+            /* Flash both LED */
 
-        /* Flash both LED */
+            AudioMoth_setBothLED(true);
 
-        AudioMoth_setBothLED(true);
+            AudioMoth_delay(100);
 
-        AudioMoth_delay(100);
+            AudioMoth_setBothLED(false);
+        }
+        else{
+            AudioMoth_setRedLED(true);
 
-        AudioMoth_setBothLED(false);
+            AudioMoth_delay(100);
+
+            AudioMoth_setRedLED(false);
+        }
+
 
     }
 

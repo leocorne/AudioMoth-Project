@@ -45,6 +45,7 @@
 								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.debug.prolog.1064933528" name="Generate debugger-friendly prologs (-mno-sched-prolog)" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.debug.prolog" value="false" valueType="boolean"/>
 								<option id="gnu.c.compiler.option.include.paths.773754268" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\leoco\Downloads\libtensorflow-cpu-windows-x86_64-1.15.0\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/fatfs_inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/emlib/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/hardware/kit/common/bsp&quot;"/>
@@ -52,8 +53,6 @@
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/Device/SiliconLabs/EFM32WG/Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/hardware/kit/common/drivers&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/CMSIS/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\leoco\OneDrive\Documents\Oxford\Project\src\tensorflow&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\leoco\OneDrive\Documents\Oxford\Project\src\tensorflow\tensorflow\lite\micro\tools\make\downloads\flatbuffers\include&quot;"/>
 								</option>
 								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.floatingpoint.type.1851835683" name="Floating-Point ABI" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.floatingpoint.type" value="floatingpoint.type.softfp" valueType="enumerated"/>
 								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.misc.dialect.758149760" name="C Language Dialect" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.misc.dialect" value="gnu.c.compiler.dialect.c11" valueType="enumerated"/>
@@ -64,6 +63,7 @@
 								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.cpp.compiler.debug.prolog.651164646" name="Generate debugger-friendly prologs (-mno-sched-prolog)" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.cpp.compiler.debug.prolog" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.compiler.option.include.paths.487173463" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Users\leoco\Downloads\libtensorflow-cpu-windows-x86_64-1.15.0\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/fatfs_inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/emlib/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/hardware/kit/common/bsp&quot;"/>
@@ -71,8 +71,6 @@
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/Device/SiliconLabs/EFM32WG/Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/hardware/kit/common/drivers&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/CMSIS/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\leoco\OneDrive\Documents\Oxford\Project\src\tensorflow&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\leoco\OneDrive\Documents\Oxford\Project\src\tensorflow\tensorflow\lite\micro\tools\make\downloads\flatbuffers\include&quot;"/>
 								</option>
 								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.cpp.compiler.def.symbols.1865515174" name="Defined symbols (-D)" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.cpp.compiler.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__FPU_PRESENT=1"/>
@@ -92,8 +90,6 @@
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/Device/SiliconLabs/EFM32WG/Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/hardware/kit/common/drivers&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/CMSIS/Include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\leoco\OneDrive\Documents\Oxford\Project\src\tensorflow&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\leoco\OneDrive\Documents\Oxford\Project\src\tensorflow\tensorflow\lite\micro\tools\make\downloads\flatbuffers\include&quot;"/>
 								</option>
 								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.as.def.symbols.1720162299" name="Defined symbols (-D)" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.as.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__FPU_PRESENT=1"/>
@@ -118,7 +114,14 @@
 							<tool id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.cpp.linker.base.951631017" name="GNU ARM C++ Linker" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.cpp.linker.base">
 								<option id="gnu.cpp.link.option.libs.640551760" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="m"/>
+									<listOptionValue builtIn="false" value="tensorflow"/>
 								</option>
+								<option id="gnu.cpp.link.option.paths.341324811" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;C:\Users\leoco\Downloads\libtensorflow-cpu-windows-x86_64-1.15.0&quot;"/>
+								</option>
+								<option id="gnu.cpp.link.option.userobjs.760356076" name="Other objects" superClass="gnu.cpp.link.option.userobjs"/>
+								<option id="gnu.cpp.link.option.shared.496548070" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" value="false" valueType="boolean"/>
+								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.cpp.linker.category.ordering.selection.42854347" name="Linker input ordering" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.cpp.linker.category.ordering.selection" value="./usb/em_usbd.o;./usb/em_usbdch9.o;./usb/em_usbdep.o;./usb/em_usbdint.o;./usb/em_usbh.o;./usb/em_usbhal.o;./usb/em_usbhep.o;./usb/em_usbhint.o;./usb/em_usbtimer.o;./src/audioMoth.o;./src/main.o;./inc/cpptest.o;./fatfs/diskio.o;./fatfs/ff.o;./fatfs/ffunicode.o;./emlib/em_acmp.o;./emlib/em_adc.o;./emlib/em_aes.o;./emlib/em_assert.o;./emlib/em_burtc.o;./emlib/em_can.o;./emlib/em_cmu.o;./emlib/em_core.o;./emlib/em_cryotimer.o;./emlib/em_csen.o;./emlib/em_dac.o;./emlib/em_dbg.o;./emlib/em_dma.o;./emlib/em_ebi.o;./emlib/em_emu.o;./emlib/em_gpcrc.o;./emlib/em_gpio.o;./emlib/em_i2c.o;./emlib/em_idac.o;./emlib/em_ldma.o;./emlib/em_lesense.o;./emlib/em_letimer.o;./emlib/em_leuart.o;./emlib/em_mpu.o;./emlib/em_msc.o;./emlib/em_opamp.o;./emlib/em_pcnt.o;./emlib/em_prs.o;./emlib/em_qspi.o;./emlib/em_rmu.o;./emlib/em_rtc.o;./emlib/em_rtcc.o;./emlib/em_system.o;./emlib/em_timer.o;./emlib/em_usart.o;./emlib/em_vcmp.o;./emlib/em_vdac.o;./emlib/em_wdog.o;./drivers/dmactrl.o;./drivers/microsd.o;./CMSIS/EFM32WG/startup_efm32wg.o;./CMSIS/EFM32WG/system_efm32wg.o;-lm;-ltensorflow" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1023993186" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -129,7 +132,6 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry excluding="tensorflow|.git/objects/info|.git/refs/tags|.git/lfs" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="tensorflow/tensorflow/lite/micro/examples/hello_world"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

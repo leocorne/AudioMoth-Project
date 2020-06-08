@@ -155,5 +155,5 @@ bool AudioMoth_renameFile(char *originalFilename, char *newFilename);
 bool AudioMoth_closeFile();
 
 /* Debugging */
+
 void AudioMoth_setupSWOForPrint(void);
-extern void logMsg(char *msg);

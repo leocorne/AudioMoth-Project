@@ -13,7 +13,6 @@
 #include "audioMoth.h"
 #include "cpptest.h"
 #include "tensorflow/lite/micro/examples/hello_world/foldertest.h"
-#include "tensorflow/lite/micro/examples/hello_world/main_functions.h"
 
 /* Logs file */
 #define LOGS_FILE                           "logs.txt"
@@ -364,13 +363,13 @@ static void copyToBackupDomain(uint32_t *dst, uint8_t *src, uint32_t length) {
 
 }
 
-void logMsg(char * msg){
+static void logMsg(char * msg){
     AudioMoth_appendFile(LOGS_FILE);
     AudioMoth_writeToFile(msg, strlen(msg));
     AudioMoth_closeFile(); 
 }
 
-void initialiseLogFile(){
+static void initialiseLogFile(){
     AudioMoth_enableFileSystem();
     logMsg(STARTUP_MESSAGE);
 }
@@ -385,10 +384,6 @@ int main(void) {
     /* Check the switch position */
 
     AM_switchPosition_t switchPosition = AudioMoth_getSwitchPosition();
-
-    // if (AudioMoth_isInitialPowerUp()){
-    //     setup();
-    // }
 
     if (switchPosition == AM_SWITCH_USB) {
 
@@ -432,11 +427,6 @@ int main(void) {
             FLASH_LED(Red, LONG_LED_FLASH_DURATION);
         }
         AudioMoth_delay(100);
-
-        setup();
-        while (true) {
-            loop();
-        }
 
         /* Flash both LEDs at the end of tests */
         AudioMoth_delay(500);

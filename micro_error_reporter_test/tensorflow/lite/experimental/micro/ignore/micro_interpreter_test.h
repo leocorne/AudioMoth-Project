@@ -14,8 +14,7 @@ limitations under the License.
 ==============================================================================*/
 
 #ifdef __cplusplus
-
-#include "tensorflow/lite/experimental/micro/micro_mutable_op_resolver.h"
+#include "tensorflow/lite/experimental/micro/micro_interpreter.h"
 #include "tensorflow/lite/experimental/micro/testing/micro_test.h"
 
 extern "C" {

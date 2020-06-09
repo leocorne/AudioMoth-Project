@@ -56,9 +56,9 @@ limitations under the License.
 
 #include "tensorflow/lite/experimental/micro/micro_error_reporter.h"
 
-#ifdef __cplusplus
-extern "C"{
-#endif
+// #ifdef __cplusplus
+// extern "C"{
+// #endif
 
 namespace micro_test {
 extern int tests_passed;
@@ -77,7 +77,7 @@ extern tflite::ErrorReporter* reporter;
   tflite::ErrorReporter* reporter;             \
   }                                            \
                                                \
-  int mainfun() {                              \
+  extern "C" int mainfun() {                   \
     micro_test::tests_passed = 0;              \
     micro_test::tests_failed = 0;              \
     tflite::MicroErrorReporter error_reporter; \
@@ -177,6 +177,6 @@ extern tflite::ErrorReporter* reporter;
 
 #endif  // TENSORFLOW_LITE_EXPERIMENTAL_MICRO_TESTING_MICRO_TEST_H_
 
-#ifdef __cplusplus
-}
-#endif
+// #ifdef __cplusplus
+// }
+// #endif

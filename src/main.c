@@ -13,7 +13,7 @@
 #include "audioMoth.h"
 #include "one.h"
 
-#include "tensorflow/lite/experimental/micro/micro_mutable_op_resolver_test.h"
+#include "tensorflow/lite/experimental/micro/fully_connected_test.h"
 
 /* Logs file */
 

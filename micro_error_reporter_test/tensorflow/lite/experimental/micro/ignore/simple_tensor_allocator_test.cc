@@ -22,8 +22,6 @@ extern "C"{
 
 #endif
 
-
-
 namespace tflite {
 namespace {
 class StackAllocator : public flatbuffers::Allocator {

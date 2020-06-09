@@ -133,7 +133,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding=".git/objects/info|.git/refs/tags|.git/lfs" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="micro_error_reporter_test/tensorflow/lite/experimental/micro/ignore|.git/objects/info|.git/refs/tags|.git/lfs|micro_error_reporter_test/tensorflow/lite/experimental/micro/ignore/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

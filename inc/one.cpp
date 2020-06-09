@@ -5,6 +5,7 @@
 
 #ifdef __cplusplus
 extern "C" {
+    #include <cstdarg>
     #include "one.h"
     int one(){
         return 1;

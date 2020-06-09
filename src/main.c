@@ -13,8 +13,10 @@
 #include "audioMoth.h"
 #include "one.h"
 
+#include "tensorflow/lite/experimental/micro/micro_error_reporter_test.h"
+
 /* Logs file */
-#define LOGS_FILE                           "logs.txt"
+
 #define STARTUP_MESSAGE                     "Loop started\n"
 
 /* Sleep and LED constants */
@@ -405,6 +407,9 @@ int main(void) {
 
         if(one() == 1){logMsg("C++ compiler working \n");}
         else{logMsg("C compiler only \n");}
+        
+        // Call function from tflite
+        mainfun();
 
 
         AudioMoth_setBothLED(true);

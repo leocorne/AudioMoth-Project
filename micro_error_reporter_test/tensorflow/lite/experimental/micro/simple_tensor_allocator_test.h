@@ -13,18 +13,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 #ifdef __cplusplus
-#include "tensorflow/lite/experimental/micro/micro_error_reporter.h"
-extern "C"{
+
+#include "tensorflow/lite/experimental/micro/micro_interpreter.h"
+#include "tensorflow/lite/experimental/micro/testing/micro_test.h"
+
+extern "C" {
 #endif
 
-int mainf() {
-  tflite::MicroErrorReporter micro_error_reporter;
-  tflite::ErrorReporter* error_reporter = &micro_error_reporter;
-  error_reporter->Report("Number: %d", 42);
-  error_reporter->Report("Badly-formed format string %");
-  error_reporter->Report("Another % badly-formed %% format string");
-  error_reporter->Report("~~~%s~~~", "ALL TESTS PASSED");
-}
+int mainfun();
 
 #ifdef __cplusplus
 }

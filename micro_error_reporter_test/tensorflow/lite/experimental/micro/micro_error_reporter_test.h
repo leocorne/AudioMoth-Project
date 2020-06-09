@@ -16,7 +16,7 @@ limitations under the License.
 #include "tensorflow/lite/experimental/micro/micro_error_reporter.h"
 extern "C" {
 #endif
-int mainfun();
+int mainf();
 
 #ifdef __cplusplus
 }

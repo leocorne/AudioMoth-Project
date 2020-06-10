@@ -3,6 +3,9 @@
  * openacousticdevices.info
  * June 2017
  *****************************************************************************/
+#ifdef __cplusplus 
+extern "C" {
+#endif
 
 #include <time.h>
 #include <stdio.h>
@@ -38,6 +41,7 @@
 #include "usbdescriptors.h"
 
 #include "audioMoth.h"
+#include <arm_const_structs.h>
 
 /*  Useful macros */
 
@@ -2097,3 +2101,15 @@ void AudioMoth_setupSWOForPrint(void) {
   ITM->TER  = 0x1;
 
 }
+
+float32_t fast_cos(float32_t x){
+    return arm_cos_f32(x);
+}
+
+float32_t fast_sin(float32_t x){
+    return arm_sin_f32(x);
+}
+
+#ifdef __cplusplus 
+}
+#endif

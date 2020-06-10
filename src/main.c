@@ -13,7 +13,7 @@
 #include "audioMoth.h"
 #include "one.h"
 
-#include "tensorflow/lite/experimental/micro/fully_connected_test.h"
+#include "tensorflow/lite/experimental/micro/examples/micro_speech/test_interface.h"
 
 /* Logs file */
 
@@ -407,11 +407,24 @@ int main(void) {
 
         if(one() == 1){logMsg("C++ compiler working \n");}
         else{logMsg("C compiler only \n");}
+
+        uint32_t startTime;
+        uint16_t startMillis;
+        AudioMoth_getTime(&startTime, &startMillis);
         
         // Call function from tflite
         mainfun();
 
+        // Calculate duration of loop
+        uint32_t endTime;
+        uint16_t endMillis;
+        AudioMoth_getTime(&endTime, &endMillis);
+        uint32_t duration = 1000 * (endTime - startTime) + endMillis - startMillis;
+        char duration_message[20];
+        sprintf(duration_message, "Loop took %d \n", duration);
+        logMsg(duration_message);
 
+        // Flash LEDs to indicate we are done 
         AudioMoth_setBothLED(true);
         AudioMoth_delay(100);
         AudioMoth_setBothLED(false);

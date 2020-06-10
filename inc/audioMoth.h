@@ -9,6 +9,8 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <arm_const_structs.h>
+
 #define LOGS_FILE                              "logs.txt"
 #define AM_FIRMWARE_VERSION_LENGTH             3
 #define AM_FIRMWARE_DESCRIPTION_LENGTH         32
@@ -21,6 +23,7 @@ extern "C" {
 
 #define AM_UNIQUE_ID_START_ADDRESS             0xFE081F0
 #define AM_UNIQUE_ID_SIZE_IN_BYTES             8
+
 
 /* Switch and battery state enumerations */
 
@@ -160,6 +163,10 @@ bool AudioMoth_closeFile();
 /* Debugging */
 
 void AudioMoth_setupSWOForPrint(void);
+
+float32_t fast_cos(float32_t x);
+
+float32_t fast_sin(float32_t x);
 
 #ifdef __cplusplus 
 }

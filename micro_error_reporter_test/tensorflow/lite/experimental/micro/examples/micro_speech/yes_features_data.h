@@ -12,16 +12,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
-#ifdef __cplusplus
 
-#include "tensorflow/lite/experimental/micro/micro_interpreter.h"
-#include "tensorflow/lite/experimental/micro/testing/micro_test.h"
+#ifndef TENSORFLOW_LITE_EXPERIMENTAL_MICRO_EXAMPLES_MICRO_SPEECH_YES_FEATURES_DATA_H_
+#define TENSORFLOW_LITE_EXPERIMENTAL_MICRO_EXAMPLES_MICRO_SPEECH_YES_FEATURES_DATA_H_
 
-extern "C" {
-#endif
+extern const int g_yes_f2e59fea_nohash_1_width;
+extern const int g_yes_f2e59fea_nohash_1_height;
+extern const unsigned char g_yes_f2e59fea_nohash_1_data[];
 
-int mainfun();
-
-#ifdef __cplusplus
-}
-#endif
+#endif  // TENSORFLOW_LITE_EXPERIMENTAL_MICRO_EXAMPLES_MICRO_SPEECH_YES_FEATURES_DATA_H_

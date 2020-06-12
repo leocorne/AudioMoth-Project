@@ -1,4 +1,4 @@
-/* Copyright 2017 The TensorFlow Authors. All Rights Reserved.
+/* Copyright 2018 The TensorFlow Authors. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -12,12 +12,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
-#ifdef __cplusplus
-extern "C" {
-#endif
 
-int mainfun();
+#ifndef TENSORFLOW_LITE_EXPERIMENTAL_MICRO_EXAMPLES_MICRO_SPEECH_NO_FEATURES_DATA_H_
+#define TENSORFLOW_LITE_EXPERIMENTAL_MICRO_EXAMPLES_MICRO_SPEECH_NO_FEATURES_DATA_H_
 
-#ifdef __cplusplus
-}
-#endif
+extern const int g_no_f9643d42_nohash_4_width;
+extern const int g_no_f9643d42_nohash_4_height;
+extern const unsigned char g_no_f9643d42_nohash_4_data[];
+
+#endif  // TENSORFLOW_LITE_EXPERIMENTAL_MICRO_EXAMPLES_MICRO_SPEECH_NO_FEATURES_DATA_H_

@@ -413,7 +413,7 @@ int main(void) {
         AudioMoth_getTime(&startTime, &startMillis);
         
         // Call function from tflite
-        mainfun();
+        setup_tflite();
 
         // Calculate duration of loop
         uint32_t endTime;

@@ -14,9 +14,9 @@
 #include "one.h"
 
 #include "tensorflow/lite/experimental/micro/examples/micro_speech/test_interface.h"
+#include "tensorflow/lite/experimental/micro/examples/micro_speech/audio_provider.h"
 
 /* Logs file */
-
 #define STARTUP_MESSAGE                     "Loop started\n"
 
 /* Sleep and LED constants */
@@ -382,16 +382,11 @@ int main(void) {
 
     AudioMoth_initialise();
 
-    // if( inference_count == 0){
-    //     logMsg("found c++ code");
-    // }
-
     /* Check the switch position */
 
     AM_switchPosition_t switchPosition = AudioMoth_getSwitchPosition();
 
     // if (AudioMoth_isInitialPowerUp()) {
-    //     initialiseHeader();
     // }
 
     if (switchPosition == AM_SWITCH_USB) {
@@ -400,11 +395,14 @@ int main(void) {
 
         AudioMoth_handleUSB();
 
-    } else {
+    } 
+    
+    else {
 
         /* Set up log file */
         initialiseLogFile();
 
+        /* Check the Simplicity Studio has been configured properly */
         if(one() == 1){logMsg("C++ compiler working \n");}
         else{logMsg("C compiler only \n");}
 
@@ -412,10 +410,10 @@ int main(void) {
         uint16_t startMillis;
         AudioMoth_getTime(&startTime, &startMillis);
         
-        // Call function from tflite
-        setup_tflite();
+        /* Call setup function from tflite */
+        mainfun();
 
-        // Calculate duration of loop
+        /* Calculate duration of loop */
         uint32_t endTime;
         uint16_t endMillis;
         AudioMoth_getTime(&endTime, &endMillis);
@@ -424,7 +422,7 @@ int main(void) {
         sprintf(duration_message, "Loop took %d \n", duration);
         logMsg(duration_message);
 
-        // Flash LEDs to indicate we are done 
+        /* Flash LEDs to indicate we are done */
         AudioMoth_setBothLED(true);
         AudioMoth_delay(100);
         AudioMoth_setBothLED(false);
@@ -435,6 +433,7 @@ int main(void) {
     AudioMoth_powerDownAndWake(1, true);
 
 }
+
 /* Time zone handler */
 
 inline void AudioMoth_timezoneRequested(int8_t *timezoneHours, int8_t *timezoneMinutes) {
@@ -447,14 +446,32 @@ inline void AudioMoth_timezoneRequested(int8_t *timezoneHours, int8_t *timezoneM
 
 
 /* AudioMoth interrupt handlers */
-
 inline void AudioMoth_handleSwitchInterrupt() {
 
     switchPositionChanged = true;
-
+    
 }
 
-inline void AudioMoth_handleMicrophoneInterrupt(int16_t sample) { }
+#define MICROPHONE_BUFFER_SIZE          512
+int16_t microphone_buffer[MICROPHONE_BUFFER_SIZE];
+int sample_index = 0;
+char samplesMsg[50];
+
+inline void AudioMoth_handleMicrophoneInterrupt(int16_t sample) { 
+    
+    microphone_buffer[sample_index] = sample;
+    sample_index++;
+
+    if (sample_index == MICROPHONE_BUFFER_SIZE){
+
+        //sprintf(samplesMsg, "Captured %d samples \n",sample_index);
+        //logMsg(samplesMsg);
+        sample_index = 0;
+
+        // Give samples to TFLite Audio Provider
+        CaptureSamples(microphone_buffer);
+    }
+}
 
 inline void AudioMoth_handleDirectMemoryAccessInterrupt(bool isPrimaryBuffer, int16_t **nextBuffer) {
 
@@ -893,4 +910,8 @@ static void flashLedToIndicateBatteryLife(void){
 
     }
 
+}
+
+void AudioMoth_enableMicrophoneDefaultSettings(){
+    AudioMoth_enableMicrophone(configSettings->gain, configSettings->clockDivider, configSettings->acquisitionCycles, configSettings->oversampleRate);
 }

@@ -16,6 +16,9 @@ limitations under the License.
 #ifndef TENSORFLOW_LITE_EXPERIMENTAL_MICRO_EXAMPLES_MICRO_SPEECH_AUDIO_PROVIDER_H_
 #define TENSORFLOW_LITE_EXPERIMENTAL_MICRO_EXAMPLES_MICRO_SPEECH_AUDIO_PROVIDER_H_
 
+#define DEFAULT_PDM_BUFFER_SIZE         512
+
+#ifdef __cplusplus
 #include "tensorflow/lite/c/c_api_internal.h"
 #include "tensorflow/lite/experimental/micro/micro_error_reporter.h"
 
@@ -43,4 +46,14 @@ TfLiteStatus GetAudioSamples(tflite::ErrorReporter* error_reporter,
 // your own platform-specific implementation.
 int32_t LatestAudioTimestamp();
 
+extern "C" {
+#endif
+
+void CaptureSamples(int16_t samples[DEFAULT_PDM_BUFFER_SIZE]);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif  // TENSORFLOW_LITE_EXPERIMENTAL_MICRO_EXAMPLES_MICRO_SPEECH_AUDIO_PROVIDER_H_
+

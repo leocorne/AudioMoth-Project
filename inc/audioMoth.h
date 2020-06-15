@@ -167,7 +167,7 @@ void AudioMoth_setupSWOForPrint(void);
 float32_t fast_cos(float32_t x);
 
 float32_t fast_sin(float32_t x);
-
+void AudioMoth_enableMicrophoneDefaultSettings();
 #ifdef __cplusplus 
 }
 #endif

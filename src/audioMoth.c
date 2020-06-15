@@ -2109,7 +2109,6 @@ float32_t fast_cos(float32_t x){
 float32_t fast_sin(float32_t x){
     return arm_sin_f32(x);
 }
-
 #ifdef __cplusplus 
 }
 #endif

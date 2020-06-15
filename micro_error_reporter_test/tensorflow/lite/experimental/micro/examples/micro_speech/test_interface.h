@@ -17,7 +17,6 @@ extern "C" {
 #endif
 
 int mainfun();
-
 #ifdef __cplusplus
 }
 #endif

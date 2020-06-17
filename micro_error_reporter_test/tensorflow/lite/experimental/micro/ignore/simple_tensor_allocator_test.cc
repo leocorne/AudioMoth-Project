@@ -13,14 +13,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifdef __cplusplus
-
 #include "tensorflow/lite/experimental/micro/micro_interpreter.h"
 #include "tensorflow/lite/experimental/micro/testing/micro_test.h"
 
-extern "C"{
-
-#endif
 
 namespace tflite {
 namespace {
@@ -173,6 +168,3 @@ TF_LITE_MICRO_TEST(TestMultipleTooLarge) {
 
 TF_LITE_MICRO_TESTS_END
 
-#ifdef __cplusplus
-}
-#endif

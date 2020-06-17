@@ -42,6 +42,7 @@ extern "C" {
 
 #include "audioMoth.h"
 #include <arm_const_structs.h>
+#include "arm_common_tables.h"
 
 /*  Useful macros */
 
@@ -2109,6 +2110,17 @@ float32_t fast_cos(float32_t x){
 float32_t fast_sin(float32_t x){
     return arm_sin_f32(x);
 }
+
+arm_rfft_fast_instance_f32 S;
+void initialise_fft(int size){
+  arm_rfft_fast_init_f32(&S, size);
+}
+
+void perform_fft(float32_t * in, float32_t * out){
+  arm_rfft_fast_f32(&S, in, out, 0);
+}
+
+
 #ifdef __cplusplus 
 }
 #endif

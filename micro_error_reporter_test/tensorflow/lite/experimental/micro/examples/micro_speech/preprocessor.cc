@@ -37,6 +37,7 @@ namespace {
 
 // Needed because some platforms don't have M_PI defined.
 constexpr float kPi = 3.14159265358979323846f;
+bool is_initialized = false;
 
 // Performs a discrete Fourier transform on the real inputs. This corresponds to
 // rdft() in the FFT package at http://www.kurims.kyoto-u.ac.jp/~ooura/fft.html,
@@ -52,54 +53,40 @@ constexpr float kPi = 3.14159265358979323846f;
 extern "C" void CalculateDiscreteFourierTransform(float* time_series, int time_series_size,
                                        float* fourier_output, tflite::ErrorReporter* error_reporter) {
   //error_reporter->Report("Begin DFT");
-  int loop_limit = time_series_size / 2;
-
-  // Store this as it will be used many times
-  float cycle_converter = kPi * 2 / time_series_size;
   
-  //error_reporter->Report("Loop limit is: %d in time series size %d", loop_limit, time_series_size);
-  for (int i = 0; i < loop_limit; ++i) {
+  perform_fft(time_series, fourier_output);
+
+  // int loop_limit = time_series_size / 2;
+
+  // // Store this as it will be used many times
+  // float cycle_converter = kPi * 2 / time_series_size;
+
+  // //error_reporter->Report("Loop limit is: %d in time series size %d", loop_limit, time_series_size);
+  // for (int i = 0; i < loop_limit; ++i) {
     
-    float cycle_offset = i * cycle_converter;
+  //   float cycle_offset = i * cycle_converter;
 
-    float real = 0;
-    for (int j = 0; j < time_series_size; ++j) {
-
-      real += time_series[j] * fast_cos(j * cycle_offset);
+  //   float real = 0;
+  //   for (int j = 0; j < time_series_size; ++j) {
+  //     real += time_series[j] * fast_cos(j * cycle_offset);
       
-      // Tested accuracy of fast_cos approximation: It always gives the best accuracy
-      // float jc = j * cycle_offset;
-      // float cosjc = cos(jc);
-      //float cjc = fast_cos(j * cycle_offset);
-      // if ((cjc - cosjc > 0.1) || (cosjc - cjc > 0.1)){
-      //   error_reporter->Report("Bad accuracy");
-      // }
-      // else if ((cjc - cosjc > 0.01) || (cosjc - cjc > 0.01)){
-      //   error_reporter->Report("Good accuracy");
-      // }
-      // else if ((cjc - cosjc > 0.001) || (cosjc - cjc > 0.001)){
-      //   error_reporter->Report("Excellent accuracy");
-      // }
-      // else{
-      //   error_reporter->Report("Best accuracy of all");
-      // }
-      
-    }
-    float imaginary = 0;
-    for (int j = 0; j < time_series_size; ++j) {
-      imaginary -= time_series[j] * fast_sin(j * cycle_offset);
-    }
-    fourier_output[(i * 2) + 0] = real;
-    fourier_output[(i * 2) + 1] = imaginary;
-    //error_reporter->Report("Stored %d values OK", i);
-  }
+  //   }
+  //   float imaginary = 0;
+  //   for (int j = 0; j < time_series_size; ++j) {
+  //     imaginary -= time_series[j] * fast_sin(j * cycle_offset);
+  //   }
+  //   fourier_output[(i * 2) + 0] = real;
+  //   fourier_output[(i * 2) + 1] = imaginary;
+  //   //error_reporter->Report("Stored %d values OK", i);
+  // }
 }
 
 // Produces a simple sine curve that is used to ensure frequencies at the center
 // of the current sample window are weighted more heavily than those at the end.
 void CalculatePeriodicHann(int window_length, float* window_function) {
+  float pi_2_over_wl = (2 * kPi) / window_length;
   for (int i = 0; i < window_length; ++i) {
-    window_function[i] = 0.5 - 0.5 * cos((2 * kPi * i) / window_length);
+    window_function[i] = 0.5 - 0.5 * fast_cos(pi_2_over_wl * i);
   }
 }
 
@@ -110,6 +97,7 @@ TfLiteStatus Preprocess(tflite::ErrorReporter* error_reporter,
                         uint8_t* output) {
   // Ensure our input and output data arrays are valid.
   //error_reporter->Report("Begin preprocessing");
+
   if (input_size > kMaxAudioSampleSize) {
     error_reporter->Report("Input size %d larger than %d", input_size,
                            kMaxAudioSampleSize);
@@ -141,6 +129,11 @@ TfLiteStatus Preprocess(tflite::ErrorReporter* error_reporter,
   //error_reporter->Report("Hann applied to time series input and padded");
   // Pull the frequency data from the time series sample.
   float fourier_values[kMaxAudioSampleSize];
+
+  if (!is_initialized){
+    initialise_fft(kMaxAudioSampleSize);
+    is_initialized = true;
+  }
   //error_reporter->Report("Declared fourier array");
   CalculateDiscreteFourierTransform(float_input, kMaxAudioSampleSize,
                                     fourier_values, error_reporter);

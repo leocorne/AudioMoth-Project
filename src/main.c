@@ -169,7 +169,7 @@ int main(void) {
 
         /* Set up log file */
         initialiseLogFile();
-
+        AudioMoth_stopWatchdog();
         /* Check the Simplicity Studio has been configured properly */
         if(one() == 1){logMsg("C++ compiler working \n");}
         else{logMsg("C compiler only \n");}

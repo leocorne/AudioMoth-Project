@@ -32,6 +32,21 @@ RecognizeCommands::RecognizeCommands(tflite::ErrorReporter* error_reporter,
   previous_top_label_time_ = 0;
 }
 
+// RecognizeCommands::RecognizeCommands(tflite::ErrorReporter* error_reporter,
+//                                      int32_t average_window_duration_ms,
+//                                      uint8_t detection_threshold,
+//                                      int32_t suppression_ms,
+//                                      int32_t minimum_count)
+//     : error_reporter_(error_reporter),
+//       average_window_duration_ms_(0),
+//       detection_threshold_(0),
+//       suppression_ms_(0),
+//       minimum_count_(0),
+//       previous_results_(error_reporter) {
+//   previous_top_label_ = "_silence_";
+//   previous_top_label_time_ = 0;
+// }
+
 TfLiteStatus RecognizeCommands::ProcessLatestResults(
     const TfLiteTensor* latest_results, const int32_t current_time_ms,
     const char** found_command, uint8_t* score, bool* is_new_command) {

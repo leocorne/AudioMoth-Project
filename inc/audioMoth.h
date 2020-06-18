@@ -172,7 +172,9 @@ void initialise_fft(int size);
 
 void perform_fft(float32_t * in, float32_t * out);
 
-void AudioMoth_enableMicrophoneDefaultSettings();
+void AudioMoth_startupMicrophone();
+
+int16_t* getAddressOfAudioCaptureBuffer();
 #ifdef __cplusplus 
 }
 #endif

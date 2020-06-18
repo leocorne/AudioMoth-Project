@@ -25,7 +25,7 @@ limitations under the License.
 #include "tensorflow/lite/version.h"
 #include "audioMoth.h"
 
-extern "C" int mainfun(int argc, char* argv[]) {
+extern "C" int mainfun() {
   // Set up logging.
   tflite::MicroErrorReporter micro_error_reporter;
   tflite::ErrorReporter* error_reporter = &micro_error_reporter;
@@ -84,67 +84,82 @@ extern "C" int mainfun(int argc, char* argv[]) {
   // Keep reading and analysing audio data in an infinite loop.
 
   error_reporter->Report("Successful setup");
+
   while (true) {
-    // Fetch the spectrogram for the current time.
-    const int32_t current_time = LatestAudioTimestamp();
-    int how_many_new_slices = 0;
-    TfLiteStatus feature_status = feature_provider.PopulateFeatureData(
-        error_reporter, previous_time, current_time, &how_many_new_slices);
-    if (feature_status != kTfLiteOk) {
-      error_reporter->Report("Feature generation failed");
-      return 1;
-    }
-    previous_time = current_time;
-    // If no new audio samples have been received since last time, don't bother
-    // running the network model.
-    if (how_many_new_slices == 0) {
-      continue;
+    
+    AM_switchPosition_t switchPosition = AudioMoth_getSwitchPosition();
+
+    if (switchPosition == AM_SWITCH_USB) {
+        AudioMoth_handleUSB();
     }
 
-    // Run the model on the spectrogram input and make sure it succeeds.
-    TfLiteStatus invoke_status = interpreter.Invoke();
-    if (invoke_status != kTfLiteOk) {
-      error_reporter->Report("Invoke failed");
-      return 1;
-    }
-
-    // The output from the model is a vector containing the scores for each
-    // kind of prediction, so figure out what the highest scoring category was.
-    TfLiteTensor* output = interpreter.output(0);
-    uint8_t top_category_score = 0;
-    int top_category_index = 0;
-    for (int category_index = 0; category_index < kCategoryCount;
-         ++category_index) {
-      const uint8_t category_score = output->data.uint8[category_index];
-      if (category_score > top_category_score) {
-        top_category_score = category_score;
-        top_category_index = category_index;
+    else {
+      error_reporter->Report("Entered main loop");
+      
+      // Fetch the spectrogram for the current time.
+      const int32_t current_time = LatestAudioTimestamp();
+      error_reporter->Report("Latest audio timestamp is %d", current_time);
+      
+      int how_many_new_slices = 0;
+      TfLiteStatus feature_status = feature_provider.PopulateFeatureData(
+          error_reporter, previous_time, current_time, &how_many_new_slices);
+      if (feature_status != kTfLiteOk) {
+        error_reporter->Report("Feature generation failed");
+        return 1;
       }
-    }
 
-    const char* found_command = nullptr;
-    uint8_t score = 0;
-    bool is_new_command = false;
-    TfLiteStatus process_status = recognizer.ProcessLatestResults(
-        output, current_time, &found_command, &score, &is_new_command);
-    if (process_status != kTfLiteOk) {
-      error_reporter->Report(
-          "RecognizeCommands::ProcessLatestResults() failed");
-      return 1;
-    }
-    if (is_new_command) {
-      /* Flash Green LED to indicate a word was spotted */
-        AudioMoth_setGreenLED(true);
-        AudioMoth_delay(100);
-        AudioMoth_setGreenLED(false);
-      error_reporter->Report("Heard %s (%d)", found_command, score);
-    }
+      error_reporter->Report("Generated %d new slices", how_many_new_slices);
+      previous_time = current_time;
+      // If no new audio samples have been received since last time, don't bother
+      // running the network model.
+      if (how_many_new_slices == 0) {
+        continue;
+      }
 
-    /* Flash both LEDs to indicate we are done with the loop*/
-    AudioMoth_setBothLED(true);
-    AudioMoth_delay(100);
-    AudioMoth_setBothLED(false);
+      // Run the model on the spectrogram input and make sure it succeeds.
+      TfLiteStatus invoke_status = interpreter.Invoke();
+      if (invoke_status != kTfLiteOk) {
+        error_reporter->Report("Invoke failed");
+        return 1;
+      }
+      error_reporter->Report("Invoked interpreter");
+      // The output from the model is a vector containing the scores for each
+      // kind of prediction, so figure out what the highest scoring category was.
+      TfLiteTensor* output = interpreter.output(0);
+      uint8_t top_category_score = 0;
+      int top_category_index = 0;
+      for (int category_index = 0; category_index < kCategoryCount;
+          ++category_index) {
+        const uint8_t category_score = output->data.uint8[category_index];
+        if (category_score > top_category_score) {
+          top_category_score = category_score;
+          top_category_index = category_index;
+        }
+      }
+
+      const char* found_command = nullptr;
+      uint8_t score = 0;
+      bool is_new_command = false;
+      TfLiteStatus process_status = recognizer.ProcessLatestResults(
+          output, current_time, &found_command, &score, &is_new_command);
+      if (process_status != kTfLiteOk) {
+        error_reporter->Report(
+            "RecognizeCommands::ProcessLatestResults() failed");
+        return 1;
+      }
+      //if (is_new_command) {
+        /* Flash Green LED to indicate a word was spotted */
+          AudioMoth_setGreenLED(true);
+          AudioMoth_delay(100);
+          AudioMoth_setGreenLED(false);
+        //error_reporter->Report("Heard %s (%d)", found_command, score);
+        error_reporter->Report("Heard %s (%d)", kCategoryLabels[top_category_index], top_category_score);
+      //}
+
+      /* Flash both LEDs to indicate we are done with the loop*/
+      AudioMoth_setBothLED(true);
+      AudioMoth_delay(100);
+      AudioMoth_setBothLED(false);
+    }
   }
-
-  return 0;
 }

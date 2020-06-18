@@ -126,6 +126,36 @@ arm_status arm_rfft_fast_init_f32(
   return (status);
 }
 
+arm_status arm_rfft_fast_init_f32_only512(
+  arm_rfft_fast_instance_f32 * S,
+  uint16_t fftLen)
+{
+  arm_cfft_instance_f32 * Sint;
+  /*  Initialise the default arm status */
+  arm_status status = ARM_MATH_SUCCESS;
+  /*  Initialise the FFT length */
+  Sint = &(S->Sint);
+  Sint->fftLen = fftLen/2;
+  S->fftLenRFFT = fftLen;
+
+  /*  Initializations of structure parameters depending on the FFT length */
+  switch (Sint->fftLen)
+  {
+  case 512U:
+    Sint->bitRevLength = ARMBITREVINDEXTABLE_512_TABLE_LENGTH;
+    Sint->pBitRevTable = (uint16_t *)armBitRevIndexTable512;
+		Sint->pTwiddle     = (float32_t *) twiddleCoef_512;
+		S->pTwiddleRFFT    = (float32_t *) twiddleCoef_rfft_1024;
+    break;
+  default:
+    /*  Reporting argument error if fftSize is not valid value */
+    status = ARM_MATH_ARGUMENT_ERROR;
+    break;
+  }
+
+  return (status);
+}
+
 /**
  * @} end of RealFFT group
  */

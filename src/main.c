@@ -11,7 +11,6 @@
 #include <stdbool.h>
 
 #include "audioMoth.h"
-#include "one.h"
 
 #include "tensorflow/lite/experimental/micro/examples/micro_speech/test_interface.h"
 #include "tensorflow/lite/experimental/micro/examples/micro_speech/audio_provider.h"
@@ -30,6 +29,26 @@
 #define BITS_PER_BYTE                       8
 #define UINT32_SIZE_IN_BITS                 32
 #define UINT32_SIZE_IN_BYTES                4
+
+/* Sleep and LED constants */
+
+#define DEFAULT_WAIT_INTERVAL               1
+
+#define WAITING_LED_FLASH_INTERVAL          2
+#define WAITING_LED_FLASH_DURATION          10
+
+#define LOW_BATTERY_LED_FLASHES             10
+
+#define SHORT_LED_FLASH_DURATION            100
+#define LONG_LED_FLASH_DURATION             500
+
+/* SRAM buffer constants */
+
+#define NUMBER_OF_BUFFERS                   8
+#define EXTERNAL_SRAM_SIZE_IN_SAMPLES       (AM_EXTERNAL_SRAM_SIZE_IN_BYTES / 2)
+#define NUMBER_OF_SAMPLES_IN_BUFFER         (EXTERNAL_SRAM_SIZE_IN_SAMPLES / NUMBER_OF_BUFFERS)
+#define NUMBER_OF_SAMPLES_IN_DMA_TRANSFER   1024
+#define NUMBER_OF_BUFFERS_TO_SKIP           1
 
 /* USB configuration constant */
 
@@ -92,9 +111,21 @@ static const configSettings_t defaultConfigSettings = {
 
 static configSettings_t *configSettings = (configSettings_t*)(AM_BACKUP_DOMAIN_START_ADDRESS + 12);
 
+/* SRAM buffer variables */
+
+static volatile uint32_t writeBuffer;
+static volatile uint32_t writeBufferIndex;
+
+static int16_t* buffers[NUMBER_OF_BUFFERS];
+
 /* Recording state */
 
 static volatile bool switchPositionChanged;
+
+/* DMA buffers */
+
+static int16_t primaryBuffer[NUMBER_OF_SAMPLES_IN_DMA_TRANSFER];
+static int16_t secondaryBuffer[NUMBER_OF_SAMPLES_IN_DMA_TRANSFER];
 
 /* Current recording file name */
 
@@ -105,6 +136,8 @@ static char fileName[20];
 static uint8_t firmwareVersion[AM_FIRMWARE_VERSION_LENGTH] = {1, 3, 0};
 
 static uint8_t firmwareDescription[AM_FIRMWARE_DESCRIPTION_LENGTH] = "AudioMoth-Firmware-Basic";
+
+
 
 /* Functions of copy to and from the backup domain */
 
@@ -170,30 +203,33 @@ int main(void) {
         /* Set up log file */
         initialiseLogFile();
         AudioMoth_stopWatchdog();
-        /* Check the Simplicity Studio has been configured properly */
-        if(one() == 1){logMsg("C++ compiler working \n");}
-        else{logMsg("C compiler only \n");}
+        AudioMoth_enableExternalSRAM();
+        initialiseBuffers();
 
-        uint32_t startTime;
-        uint16_t startMillis;
-        AudioMoth_getTime(&startTime, &startMillis);
+        /* Check the Simplicity Studio has been configured properly */
+        // if(one() == 1){logMsg("C++ compiler working \n");}
+        // else{logMsg("C compiler only \n");}
+
+        // uint32_t startTime;
+        // uint16_t startMillis;
+        // AudioMoth_getTime(&startTime, &startMillis);
         
-        /* Call setup function from tflite */
+        /* Call main function from tflite */
         mainfun();
 
         /* Calculate duration of loop */
-        uint32_t endTime;
-        uint16_t endMillis;
-        AudioMoth_getTime(&endTime, &endMillis);
-        uint32_t duration = 1000 * (endTime - startTime) + endMillis - startMillis;
-        char duration_message[20];
-        sprintf(duration_message, "Loop took %d \n", duration);
-        logMsg(duration_message);
+        // uint32_t endTime;
+        // uint16_t endMillis;
+        // AudioMoth_getTime(&endTime, &endMillis);
+        // uint32_t duration = 1000 * (endTime - startTime) + endMillis - startMillis;
+        // char duration_message[20];
+        // sprintf(duration_message, "Loop took %d \n", duration);
+        // logMsg(duration_message);
 
         /* Flash LEDs to indicate we are done */
-        AudioMoth_setBothLED(true);
-        AudioMoth_delay(100);
-        AudioMoth_setBothLED(false);
+        // AudioMoth_setBothLED(true);
+        // AudioMoth_delay(100);
+        // AudioMoth_setBothLED(false);
     }
 
     /* Power down and wake up in one second */
@@ -220,28 +256,19 @@ inline void AudioMoth_handleSwitchInterrupt() {
     
 }
 
-#define MICROPHONE_BUFFER_SIZE          512
-int16_t microphone_buffer[MICROPHONE_BUFFER_SIZE];
-int sample_index = 0;
-//char samplesMsg[50];
-
-inline void AudioMoth_handleMicrophoneInterrupt(int16_t sample) { 
-    
-    microphone_buffer[sample_index] = sample;
-    sample_index++;
-
-    if (sample_index == MICROPHONE_BUFFER_SIZE){
-
-        //sprintf(samplesMsg, "Captured %d samples \n",sample_index);
-        //logMsg(samplesMsg);
-        sample_index = 0;
-
-        // Give samples to TFLite Audio Provider
-        CaptureSamples(microphone_buffer);
-    }
+void AudioMoth_handleMicrophoneInterrupt(int16_t sample) { 
+    //    CaptureSamples(microphone_buffer);
 }
 
-inline void AudioMoth_handleDirectMemoryAccessInterrupt(bool isPrimaryBuffer, int16_t **nextBuffer) {}
+inline void AudioMoth_handleDirectMemoryAccessInterrupt(bool isPrimaryBuffer, int16_t **nextBuffer) {
+
+    int16_t *source = secondaryBuffer;
+
+    if (isPrimaryBuffer) source = primaryBuffer;
+
+    CaptureSamples(source);
+
+}
 
 
 /* AudioMoth USB message handlers */
@@ -304,8 +331,76 @@ inline void AudioMoth_usbApplicationPacketReceived(uint32_t messageType, uint8_t
 
 }
 
-void AudioMoth_enableMicrophoneDefaultSettings(){
+/* Remove DC offset from the microphone samples */
+
+// static void filter(int16_t *source, int16_t *dest, uint8_t sampleRateDivider, uint32_t size) {
+
+//     int32_t filteredOutput;
+//     int32_t scaledPreviousFilterOutput;
+
+//     int index = 0;
+
+//     for (int i = 0; i < size; i += sampleRateDivider) {
+
+//         int32_t sample = 0;
+
+//         for (int j = 0; j < sampleRateDivider; j += 1) {
+
+//             sample += (int32_t)source[i + j];
+
+//         }
+
+//         if (bitsToShift > 0) sample <<= bitsToShift;
+
+//         if (bitsToShift < 0) sample >>= -bitsToShift;
+
+//         scaledPreviousFilterOutput = (int32_t)(DC_BLOCKING_FACTOR * (float)previousFilterOutput);
+
+//         filteredOutput = sample - previousSample + scaledPreviousFilterOutput;
+
+//         if (filteredOutput > INT16_MAX) {
+
+//             dest[index++] = INT16_MAX;
+
+//         } else if (filteredOutput < INT16_MIN) {
+
+//             dest[index++] = INT16_MIN;
+
+//         } else {
+
+//             dest[index++] = (int16_t)filteredOutput;
+
+//         }
+
+//         previousFilterOutput = filteredOutput;
+
+//         previousSample = sample;
+
+//     }
+
+// }
+
+void initialiseBuffers(){
+    /* Initialise buffers */
+
+    writeBuffer = 0;
+
+    writeBufferIndex = 0;
+
+    buffers[0] = (int16_t*)AM_EXTERNAL_SRAM_START_ADDRESS;
+
+    for (int i = 1; i < NUMBER_OF_BUFFERS; i += 1) {
+        buffers[i] = buffers[i - 1] + NUMBER_OF_SAMPLES_IN_BUFFER;
+    }
+}
+
+int16_t* getAddressOfAudioCaptureBuffer(){
+    return buffers[0];
+}
+
+void AudioMoth_startupMicrophone(){
     AudioMoth_enableMicrophone(configSettings->gain, configSettings->clockDivider, configSettings->acquisitionCycles, configSettings->oversampleRate);
+    AudioMoth_initialiseDirectMemoryAccess(primaryBuffer, secondaryBuffer, NUMBER_OF_SAMPLES_IN_DMA_TRANSFER);
 }
 
 

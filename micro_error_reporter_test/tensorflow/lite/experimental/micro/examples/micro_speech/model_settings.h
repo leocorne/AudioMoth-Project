@@ -29,9 +29,9 @@ constexpr int kAudioSampleFrequency = 16000;
 // if you change your model you'll need to update these constants.
 constexpr int kAverageWindowSize = 6;
 constexpr int kFeatureSliceSize =
-    ((kMaxAudioSampleSize / 2) + (kAverageWindowSize - 1)) / kAverageWindowSize;
-constexpr int kFeatureSliceCount = 49;
-constexpr int kFeatureElementCount = (kFeatureSliceSize * kFeatureSliceCount);
+    ((kMaxAudioSampleSize / 2) + (kAverageWindowSize - 1)) / kAverageWindowSize; // 43
+constexpr int kFeatureSliceCount = 49; 
+constexpr int kFeatureElementCount = (kFeatureSliceSize * kFeatureSliceCount); // 2107
 constexpr int kFeatureSliceStrideMs = 20;
 constexpr int kFeatureSliceDurationMs = 30;
 

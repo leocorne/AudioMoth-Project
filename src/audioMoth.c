@@ -2113,7 +2113,7 @@ float32_t fast_sin(float32_t x){
 
 arm_rfft_fast_instance_f32 S;
 void initialise_fft(int size){
-  arm_rfft_fast_init_f32(&S, size);
+  arm_rfft_fast_init_f32_only512(&S, size);
 }
 
 void perform_fft(float32_t * in, float32_t * out){

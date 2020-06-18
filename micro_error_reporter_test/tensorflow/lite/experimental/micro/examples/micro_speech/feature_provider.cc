@@ -44,6 +44,7 @@ TfLiteStatus FeatureProvider::PopulateFeatureData(
   // figure out which audio data we need to fetch.
   const int last_step = (last_time_in_ms / kFeatureSliceStrideMs);
   const int current_step = (time_in_ms / kFeatureSliceStrideMs);
+  //error_reporter->Report("Current step: %d, last step: %d",current_step, last_step);
 
   int slices_needed = current_step - last_step;
   // If this is the first call, make sure we don't use any cached information.
@@ -55,6 +56,8 @@ TfLiteStatus FeatureProvider::PopulateFeatureData(
     slices_needed = kFeatureSliceCount;
   }
   *how_many_new_slices = slices_needed;
+
+  //error_reporter->Report("Fetching %d slices", slices_needed);
 
   const int slices_to_keep = kFeatureSliceCount - slices_needed;
   const int slices_to_drop = kFeatureSliceCount - slices_to_keep;
@@ -88,9 +91,13 @@ TfLiteStatus FeatureProvider::PopulateFeatureData(
     for (int new_slice = slices_to_keep; new_slice < kFeatureSliceCount;
          ++new_slice) {
       const int new_step = (current_step - kFeatureSliceCount + 1) + new_slice;
-      const int32_t slice_start_ms = (new_step * kFeatureSliceStrideMs);
+      int32_t slice_start_ms = (new_step * kFeatureSliceStrideMs);
       int16_t* audio_samples = nullptr;
       int audio_samples_size = 0;
+      //error_reporter->Report("Getting %d th slice",new_slice);
+      
+      if (slice_start_ms < 0) slice_start_ms = 0;
+
       GetAudioSamples(error_reporter, slice_start_ms, kFeatureSliceDurationMs,
                       &audio_samples_size, &audio_samples);
       if (audio_samples_size < kMaxAudioSampleSize) {
@@ -98,6 +105,9 @@ TfLiteStatus FeatureProvider::PopulateFeatureData(
                                audio_samples_size, kMaxAudioSampleSize);
         return kTfLiteError;
       }
+
+      //error_reporter->Report("Finished recording %d th slice. Will preprocess it now",new_slice);
+
       uint8_t* new_slice_data = feature_data_ + (new_slice * kFeatureSliceSize);
       TfLiteStatus preprocess_status =
           Preprocess(error_reporter, audio_samples, audio_samples_size,

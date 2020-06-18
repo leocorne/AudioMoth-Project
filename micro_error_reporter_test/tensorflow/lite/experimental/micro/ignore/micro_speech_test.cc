@@ -29,7 +29,8 @@ TF_LITE_MICRO_TEST(TestInvoke) {
   // Set up logging.
   tflite::MicroErrorReporter micro_error_reporter;
   tflite::ErrorReporter* error_reporter = &micro_error_reporter;
-  error_reporter->Report("Started tests...");
+  error_reporter->Report("Setting up...");
+
   // Map the model into a usable data structure. This doesn't involve any
   // copying or parsing, it's a very lightweight operation.
   const tflite::Model* model = ::tflite::GetModel(g_tiny_conv_model_data);
@@ -38,12 +39,16 @@ TF_LITE_MICRO_TEST(TestInvoke) {
         "Model provided is schema version %d not equal "
         "to supported version %d.\n",
         model->version(), TFLITE_SCHEMA_VERSION);
+    return 1;
   }
   error_reporter->Report("Version OK");
+  
   // This pulls in all the operation implementations we need.
   tflite::ops::micro::AllOpsResolver resolver;
 
   // Create an area of memory to use for input, output, and intermediate arrays.
+  // The size of this will depend on the model you're using, and may need to be
+  // determined by experimentation.
   const int tensor_arena_size = 10 * 1024;
   uint8_t tensor_arena[tensor_arena_size];
   tflite::SimpleTensorAllocator tensor_allocator(tensor_arena,
@@ -51,22 +56,21 @@ TF_LITE_MICRO_TEST(TestInvoke) {
 
   error_reporter->Report("Created tensor allocator OK");
   // Build an interpreter to run the model with.
-  // tflite::MicroInterpreter interpreter(model, resolver, &tensor_allocator,
-  //                                      error_reporter);
+  tflite::MicroInterpreter interpreter(model, resolver, &tensor_allocator,
+                                       error_reporter);
 
-  // error_reporter->Report("Interpreter created");
-  // Get information about the memory area to use for the model's input.
-  // TfLiteTensor* input = interpreter.input(0);
+  error_reporter->Report("Created interpreter");
+  TfLiteTensor* model_input = interpreter.input(0);
 
-  // // Make sure the input has the properties we expect.
-  // TF_LITE_MICRO_EXPECT_NE(nullptr, input);
-  // TF_LITE_MICRO_EXPECT_EQ(4, input->dims->size);
-  // TF_LITE_MICRO_EXPECT_EQ(1, input->dims->data[0]);
-  // TF_LITE_MICRO_EXPECT_EQ(49, input->dims->data[1]);
-  // TF_LITE_MICRO_EXPECT_EQ(43, input->dims->data[2]);
-  // TF_LITE_MICRO_EXPECT_EQ(kTfLiteUInt8, input->type);
+  // Make sure the input has the properties we expect.
+  TF_LITE_MICRO_EXPECT_NE(nullptr, model_input);
+  TF_LITE_MICRO_EXPECT_EQ(4, model_input->dims->size);
+  TF_LITE_MICRO_EXPECT_EQ(1, model_input->dims->data[0]);
+  TF_LITE_MICRO_EXPECT_EQ(49, model_input->dims->data[1]);
+  TF_LITE_MICRO_EXPECT_EQ(43, model_input->dims->data[2]);
+  TF_LITE_MICRO_EXPECT_EQ(kTfLiteUInt8, model_input->type);
 
-  // error_reporter->Report("Dimensions OK");
+  error_reporter->Report("Dimensions OK");
   // // Copy a spectrogram created from a .wav audio file of someone saying "Yes",
   // // into the memory area used for the input.
   // const uint8_t* yes_features_data = g_yes_f2e59fea_nohash_1_data;

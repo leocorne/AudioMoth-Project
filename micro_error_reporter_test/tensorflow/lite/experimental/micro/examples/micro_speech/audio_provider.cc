@@ -32,24 +32,37 @@ int16_t g_audio_output_buffer[kMaxAudioSampleSize];
 // Mark as volatile so we can check in a while loop to see if
 // any samples have arrived yet.
 volatile int32_t g_latest_audio_timestamp = 0;
+
+// Required for filtering
+float DC_BLOCKING_FACTOR  = 0.995;
+int16_t filteredOutput = 0;
+int16_t scaledPreviousFilterOutput = 0;
+int16_t previousSample = 0;
+int16_t previousFilterOutput = 0;
 }  // namespace
 
 void CaptureSamples(int16_t *samples_source) {
-  // This is how many bytes of new data we have each time this is called
+  // This is how many samples of new data we have each time this is called
   const int number_of_samples = NUMBER_OF_SAMPLES_IN_DMA_TRANSFER;
   // Calculate what timestamp the last audio sample represents
-  const int32_t time_in_ms =
-      g_latest_audio_timestamp +
-      (number_of_samples / (kAudioSampleFrequency / 1000));
-  // Determine the index, in the history of all samples, of the last sample
-  const int32_t start_sample_offset =
-      g_latest_audio_timestamp * (kAudioSampleFrequency / 1000);
+  const int32_t time_in_ms = g_latest_audio_timestamp + (number_of_samples / (kAudioSampleFrequency / 1000));
+  // Determine the index, in the history of all samples, of the first sample in this series
+  const int32_t start_sample_offset = g_latest_audio_timestamp * (kAudioSampleFrequency / 1000);
   // Determine the index of this sample in our ring buffer
   const int capture_index = start_sample_offset % kAudioCaptureBufferSize;
+
   // Read the data to the correct place in our buffer
-  for (int i = 0; i<NUMBER_OF_SAMPLES_IN_DMA_TRANSFER; i++){
-    g_audio_capture_buffer[capture_index + i] = samples_source[i];
+  // Apply appropriate filter to remove DC offset
+  for (int i = 0; i<number_of_samples; i++){
+    scaledPreviousFilterOutput = (int16_t)(DC_BLOCKING_FACTOR * (float)previousFilterOutput);
+    filteredOutput = samples_source[i] - previousSample + scaledPreviousFilterOutput;
+    
+    g_audio_capture_buffer[capture_index + i] = filteredOutput;
+
+    previousFilterOutput = filteredOutput;
+    previousSample = samples_source[i];
   }
+
   // This is how we let the outside world know that new audio data has arrived.
   g_latest_audio_timestamp = time_in_ms;
 }

@@ -14,7 +14,6 @@
 #include "one.h"
 
 /* Logs file */
-#define LOGS_FILE                           "logs.txt"
 #define STARTUP_MESSAGE                     "Loop started\n"
 
 /* Sleep and LED constants */

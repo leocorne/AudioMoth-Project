@@ -3,9 +3,15 @@
  * openacousticdevices.info
  * June 2017
  *****************************************************************************/
+#ifdef __cplusplus 
+extern "C" {
+#endif
+
 
 #include <stdint.h>
 #include <stdbool.h>
+
+#define LOGS_FILE                           "logs.txt"
 
 #define AM_FIRMWARE_VERSION_LENGTH             3
 #define AM_FIRMWARE_DESCRIPTION_LENGTH         32
@@ -157,3 +163,8 @@ bool AudioMoth_closeFile();
 /* Debugging */
 
 void AudioMoth_setupSWOForPrint(void);
+
+#ifdef __cplusplus 
+}
+#endif
+

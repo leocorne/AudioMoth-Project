@@ -51,20 +51,7 @@
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/middleware/usb_gecko/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/Device/SiliconLabs/EFM32WG/Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/hardware/kit/common/drivers&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/utensor}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/classifier}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/third_party}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/third_party/flatbuffers/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/utensor/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/utensor/TESTS}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/third_party/ruy}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/CMSIS/NN/Include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/CMSIS/DSP/Include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/CMSIS/Core/Include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/CMSIS/DSP/PrivateInclude}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/third_party/gemmlowp}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/CMSIS/Include&quot;"/>
 								</option>
 								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.floatingpoint.type.1851835683" name="Floating-Point ABI" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.floatingpoint.type" value="floatingpoint.type.softfp" valueType="enumerated"/>
 								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.misc.dialect.758149760" name="C Language Dialect" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.misc.dialect" value="gnu.c.compiler.dialect.c11" valueType="enumerated"/>
@@ -81,20 +68,7 @@
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/middleware/usb_gecko/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/Device/SiliconLabs/EFM32WG/Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/hardware/kit/common/drivers&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/utensor}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/classifier}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/third_party}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/third_party/flatbuffers/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/utensor/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/utensor/TESTS}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/third_party/ruy}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/CMSIS/NN/Include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/CMSIS/DSP/Include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/CMSIS/Core/Include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/CMSIS/DSP/PrivateInclude}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/third_party/gemmlowp}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/CMSIS/Include&quot;"/>
 								</option>
 								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.cpp.compiler.def.symbols.1865515174" name="Defined symbols (-D)" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.cpp.compiler.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__FPU_PRESENT=1"/>
@@ -113,20 +87,7 @@
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/middleware/usb_gecko/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/Device/SiliconLabs/EFM32WG/Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/hardware/kit/common/drivers&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/utensor}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/classifier}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/third_party}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/third_party/flatbuffers/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/utensor/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/utensor/TESTS}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/third_party/ruy}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/CMSIS/NN/Include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/CMSIS/DSP/Include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/CMSIS/Core/Include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/CMSIS/DSP/PrivateInclude}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AudioMoth-Project/ei_library/edge-impulse-sdk/third_party/gemmlowp}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/CMSIS/Include&quot;"/>
 								</option>
 								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.as.def.symbols.1720162299" name="Defined symbols (-D)" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.as.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__FPU_PRESENT=1"/>
@@ -161,7 +122,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding=".git/objects/info|.git/refs/tags|.git/lfs|ei_library/edge-impulse-sdk/utensor/examples/|ei_library/edge-impulse-sdk/utensor/TESTS/|ei_library/edge-impulse-sdk/porting/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding=".git/objects/info|.git/refs/tags|.git/lfs" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -173,21 +134,18 @@
 		<project id="AudioMoth.com.silabs.ss.framework.ide.project.core.cdt.cdtMbsProjectType.2129556958" name="SLS CDT Project" projectType="com.silabs.ss.framework.ide.project.core.cdt.cdtMbsProjectType"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope" versionNumber="2">
-		<configuration configurationName="GNU ARM v4.9.3 - Release">
-			<resource resourceType="PROJECT" workspacePath="/AudioMoth"/>
-		</configuration>
-	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt.release#com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt:4.9.3.20150529;com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt.release#com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt:4.9.3.20150529.;com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.cpp.compiler.base.1257696416;com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.cpp.compiler.input.829463623">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt.debug#com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt:4.9.3.20150529;com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt.debug#com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt:4.9.3.20150529.;com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.base.271725278;com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.input.1843935982">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt.release#com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt:4.9.3.20150529;com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt.release#com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt:4.9.3.20150529.;com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.base.1844279405;com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.input.988823615">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="GNU ARM v4.9.3 - Release">
+			<resource resourceType="PROJECT" workspacePath="/AudioMoth"/>
+		</configuration>
 	</storageModule>
 </cproject>

@@ -12,7 +12,7 @@
 
 #include "audioMoth.h"
 #include "one.h"
-#include "source/ei_main_loop.h"
+//#include "source/ei_main_loop.h"
 
 /* Logs file */
 #define STARTUP_MESSAGE                     "Loop started\n"
@@ -294,7 +294,8 @@ static uint32_t *timeOfNextRecording = (uint32_t*)(AM_BACKUP_DOMAIN_START_ADDRES
 
 static uint32_t *durationOfNextRecording = (uint32_t*)(AM_BACKUP_DOMAIN_START_ADDRESS + 8);
 
-static configSettings_t *configSettings = (configSettings_t*)(AM_BACKUP_DOMAIN_START_ADDRESS + 12);
+// static configSettings_t *configSettings = (configSettings_t*)(AM_BACKUP_DOMAIN_START_ADDRESS + 12);
+static configSettings_t *configSettings = &defaultConfigSettings;
 
 /* DC filter variables */
 
@@ -373,6 +374,58 @@ static void initialiseLogFile(){
     logMsg(STARTUP_MESSAGE);
 }
 
+void fillBuffers(){
+    /* Initialise buffers */
+
+    writeBuffer = 0;
+
+    writeBufferIndex = 0;
+
+    buffers[0] = (int16_t*)AM_EXTERNAL_SRAM_START_ADDRESS;
+
+    for (int i = 1; i < NUMBER_OF_BUFFERS; i += 1) {
+        buffers[i] = buffers[i - 1] + NUMBER_OF_SAMPLES_IN_BUFFER;
+    }
+
+    /* Calculate the bits to shift */
+
+    bitsToShift = 0;
+
+    uint16_t oversampling = configSettings->oversampleRate * configSettings->sampleRateDivider;
+
+    while (oversampling > 16) {
+        oversampling >>= 1;
+        bitsToShift -= 1;
+    }
+
+    while (oversampling < 16) {
+        oversampling <<= 1;
+        bitsToShift += 1;
+    }
+
+    /* Calculate recording parameters */
+
+    uint32_t numberOfSamples = 16000;
+
+    /* Initialise microphone for recording */
+
+    AudioMoth_enableExternalSRAM();
+
+    AudioMoth_enableMicrophone(configSettings->gain, configSettings->clockDivider, configSettings->acquisitionCycles, configSettings->oversampleRate);
+
+    AudioMoth_initialiseDirectMemoryAccess(primaryBuffer, secondaryBuffer, NUMBER_OF_SAMPLES_IN_DMA_TRANSFER);
+
+    AudioMoth_startMicrophoneSamples(configSettings->sampleRate);
+
+    /* Initialise file system and open a new file */
+
+    while(writeBufferIndex < numberOfSamples){
+        logMsg("Waiting for samples");
+        AudioMoth_delay(10);
+    }
+
+}
+
 /* Main function */
 int main(void) {
 
@@ -406,8 +459,14 @@ int main(void) {
         if(one() == 1){logMsg("C++ compiler working \n");}
         else{logMsg("C compiler only \n");}
 
-        mainloop();
+        fillBuffers();
 
+        // uint32_t currentTime;
+        // AudioMoth_getTime(&currentTime, NULL);
+
+        // AM_batteryState_t batt =  AM_BATTERY_FULL;
+        // makeRecording(currentTime, 10000, true, batt);
+        //mainloop();
 
         AudioMoth_setBothLED(true);
         AudioMoth_delay(100);

@@ -20,6 +20,8 @@
  * SOFTWARE.
  */
 
+#include "ei_classifier_porting.h"
+
 #ifndef _EDGE_IMPULSE_RUN_CLASSIFIER_H_
 #define _EDGE_IMPULSE_RUN_CLASSIFIER_H_
 
@@ -32,7 +34,7 @@
 #if defined(EI_CLASSIFIER_HAS_SAMPLER) && EI_CLASSIFIER_HAS_SAMPLER == 1
 #include "ei_sampler.h"
 #endif
-#include "edge-impulse-sdk/porting/ei_classifier_porting.h"
+
 #include "model-parameters/dsp_blocks.h"
 
 #if EI_CLASSIFIER_INFERENCING_ENGINE == EI_CLASSIFIER_UTENSOR

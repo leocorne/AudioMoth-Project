@@ -36,6 +36,7 @@ typedef enum {
     EI_IMPULSE_CUBEAI_ERROR = -7
 } EI_IMPULSE_ERROR;
 
+
 /**
  * Cancelable sleep, can be triggered with signal from other thread
  */

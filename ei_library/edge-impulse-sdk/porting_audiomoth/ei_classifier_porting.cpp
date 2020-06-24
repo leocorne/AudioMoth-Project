@@ -21,29 +21,73 @@
  */
 
 #include <stdarg.h>
-#include "us_ticker_api.h"
+#include <stdio.h>
+#include <string.h>
 #include "audioMoth.h"
+#include "ei_classifier_porting.h"
 
-using namespace rtos;
+__attribute__((weak)) EI_IMPULSE_ERROR ei_run_impulse_check_canceled() {
+    return EI_IMPULSE_OK;
+}
 
 int BUFFER_LEN = 256;
+
+/**
+ * Cancelable sleep, can be triggered with signal from other thread
+ */
+__attribute__((weak)) EI_IMPULSE_ERROR ei_sleep(int32_t time_ms) {
+    AudioMoth_delay(time_ms);
+    return EI_IMPULSE_OK;
+}
+
+uint64_t ei_read_timer_ms() {
+    uint32_t s;
+    uint16_t ms;  
+
+    AudioMoth_getTime(&s, &ms);
+
+    return (uint64_t) ((s * 1000) + ms);
+}
+
+uint64_t ei_read_timer_us() {
+    // TODO: find out if we can actually get microseconds
+    uint32_t s;
+    uint16_t ms;  
+
+    AudioMoth_getTime(&s, &ms);
+
+    return ((uint64_t)(s * 1000000)) + ((uint64_t)(ms * 1000));
+}
 
 void ei_printf(const char *format, ...) {
     va_list myargs;
     va_start(myargs, format);
 
-    char buffer[BUFFER_LEN];
-    vsprintf(buffer, format, myargs);
+    char msgbuffer[BUFFER_LEN];
+    vsprintf(msgbuffer, format, myargs);
 
     AudioMoth_appendFile(LOGS_FILE);
-    AudioMoth_writeToFile(buffer, BUFFER_LEN);
+    AudioMoth_writeToFile(msgbuffer, strlen(msgbuffer));
     AudioMoth_closeFile();  
 
     va_end(myargs);
 }
 
 void ei_printf_float(float f) {
-    ei_printf("%f", f);
+    char str[100];
+
+    char *tmpSign = (f < 0) ? "-" : "";
+    float tmpVal = (f < 0) ? -f : f;
+
+    int tmpInt1 = tmpVal;                  // Get the integer.
+    float tmpFrac = tmpVal - tmpInt1;      // Get fraction.
+    int tmpInt2 = (int)(tmpFrac * 10000);  // Turn into integer.
+
+    // Print as parts, note that you need 0-padding for fractional bit.
+
+    sprintf(str, "%s%d.%04d\n", tmpSign, tmpInt1, tmpInt2);
+
+    ei_printf("%s", str);
 }
 
 // extern "C" void DebugLog(const char* s) {

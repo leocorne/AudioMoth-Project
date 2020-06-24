@@ -12,6 +12,7 @@
 
 #include "audioMoth.h"
 #include "one.h"
+#include "source/ei_main_loop.h"
 
 /* Logs file */
 #define STARTUP_MESSAGE                     "Loop started\n"
@@ -404,6 +405,8 @@ int main(void) {
 
         if(one() == 1){logMsg("C++ compiler working \n");}
         else{logMsg("C compiler only \n");}
+
+        mainloop();
 
 
         AudioMoth_setBothLED(true);

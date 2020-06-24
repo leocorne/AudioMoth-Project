@@ -12,7 +12,7 @@
 
 #include "audioMoth.h"
 #include "one.h"
-//#include "source/ei_main_loop.h"
+#include "source/ei_main_loop.h"
 
 /* Logs file */
 #define STARTUP_MESSAGE                     "Loop started\n"
@@ -420,7 +420,7 @@ void fillBuffers(){
     /* Initialise file system and open a new file */
 
     while(writeBufferIndex < numberOfSamples){
-        logMsg("Waiting for samples");
+        logMsg("Waiting for samples\n");
         AudioMoth_delay(10);
     }
 
@@ -460,13 +460,7 @@ int main(void) {
         else{logMsg("C compiler only \n");}
 
         fillBuffers();
-
-        // uint32_t currentTime;
-        // AudioMoth_getTime(&currentTime, NULL);
-
-        // AM_batteryState_t batt =  AM_BATTERY_FULL;
-        // makeRecording(currentTime, 10000, true, batt);
-        //mainloop();
+        mainloop(buffers[0], NUMBER_OF_SAMPLES_IN_BUFFER, 16000);
 
         AudioMoth_setBothLED(true);
         AudioMoth_delay(100);
@@ -501,24 +495,26 @@ inline void AudioMoth_handleMicrophoneInterrupt(int16_t sample) { }
 
 inline void AudioMoth_handleDirectMemoryAccessInterrupt(bool isPrimaryBuffer, int16_t **nextBuffer) {
 
-    int16_t *source = secondaryBuffer;
+    // Only save data in first buffer, throw away results if we are not going to look at them
+    if (writeBuffer == 0){
+        
+        int16_t *source = secondaryBuffer;
 
-    if (isPrimaryBuffer) source = primaryBuffer;
+        if (isPrimaryBuffer) source = primaryBuffer;
 
-    /* Update the current buffer index and write buffer */
+        /* Update the current buffer index and write buffer */
 
-    filter(source, buffers[writeBuffer] + writeBufferIndex, configSettings->sampleRateDivider, NUMBER_OF_SAMPLES_IN_DMA_TRANSFER);
+        filter(source, buffers[writeBuffer] + writeBufferIndex, configSettings->sampleRateDivider, NUMBER_OF_SAMPLES_IN_DMA_TRANSFER);
 
-    writeBufferIndex += NUMBER_OF_SAMPLES_IN_DMA_TRANSFER / configSettings->sampleRateDivider;
+        writeBufferIndex += NUMBER_OF_SAMPLES_IN_DMA_TRANSFER / configSettings->sampleRateDivider;
 
-    if (writeBufferIndex == NUMBER_OF_SAMPLES_IN_BUFFER) {
+        if (writeBufferIndex == NUMBER_OF_SAMPLES_IN_BUFFER) {
 
-        writeBufferIndex = 0;
+            //writeBufferIndex = 0;
 
-        writeBuffer = (writeBuffer + 1) & (NUMBER_OF_BUFFERS - 1);
-
+            writeBuffer = (writeBuffer + 1) & (NUMBER_OF_BUFFERS - 1);
+        }
     }
-
 }
 
 /* AudioMoth USB message handlers */

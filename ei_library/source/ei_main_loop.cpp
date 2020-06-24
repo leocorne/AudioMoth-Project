@@ -16,29 +16,25 @@
 //     return str.substr(first, (last - first + 1));
 // }
 
-extern "C" void mainloop(){
+extern "C" void mainloop(int16_t* raw_features, int raw_features_size, int signal_size){
 
     ei_printf("Hello world %d, %f, %s", 9, 3.2f, "hiii\n");
     ei_printf_float(23.4345f);
 
     AudioMoth_enableExternalSRAM();
 
-    float* raw_features = (float*)AM_EXTERNAL_SRAM_START_ADDRESS;
+    float *float_features = (float*) (raw_features + raw_features_size);
 
-
-    int signal_size = 16000;
-
-
-    for (int i =0; i<signal_size; i++){
-        raw_features[i] = 0.001f * i;
+    for(int i = 0; i < signal_size; ++i){
+        float_features[i] = (float)raw_features[i];
     }
 
-    ei_printf("Generated raw_features \n");
+    ei_printf("Generated float_features \n");
 
     ei_impulse_result_t result;
-
     signal_t signal;
-    numpy::signal_from_buffer(&raw_features[0], signal_size, &signal);
+    
+    numpy::signal_from_buffer(&float_features[0], signal_size, &signal);
 
     EI_IMPULSE_ERROR res = run_classifier(&signal, &result, true);
 

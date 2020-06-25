@@ -60,6 +60,37 @@ uint64_t ei_read_timer_us() {
 }
 
 void ei_printf(const char *format, ...) {
+    // va_list myargs;
+    // va_start(myargs, format);
+
+    // char msgbuffer[BUFFER_LEN];
+    // vsprintf(msgbuffer, format, myargs);
+
+    // AudioMoth_appendFile(LOGS_FILE);
+    // AudioMoth_writeToFile(msgbuffer, strlen(msgbuffer));
+    // AudioMoth_closeFile();  
+
+    // va_end(myargs);
+}
+
+void ei_printf_float(float f) {
+    // char str[100];
+
+    // char *tmpSign = (f < 0) ? "-" : "";
+    // float tmpVal = (f < 0) ? -f : f;
+
+    // int tmpInt1 = tmpVal;                  // Get the integer.
+    // float tmpFrac = tmpVal - tmpInt1;      // Get fraction.
+    // int tmpInt2 = (int)(tmpFrac * 10000);  // Turn into integer.
+
+    // // Print as parts, note that you need 0-padding for fractional bit.
+
+    // sprintf(str, "%s%d.%04d\n", tmpSign, tmpInt1, tmpInt2);
+
+    // ei_printf("%s", str);
+}
+
+void ei_printf_force(const char *format, ...) {
     va_list myargs;
     va_start(myargs, format);
 
@@ -73,7 +104,7 @@ void ei_printf(const char *format, ...) {
     va_end(myargs);
 }
 
-void ei_printf_float(float f) {
+void ei_printf_force_float(float f) {
     char str[100];
 
     char *tmpSign = (f < 0) ? "-" : "";
@@ -87,7 +118,7 @@ void ei_printf_float(float f) {
 
     sprintf(str, "%s%d.%04d\n", tmpSign, tmpInt1, tmpInt2);
 
-    ei_printf("%s", str);
+    ei_printf_force("%s", str);
 }
 
 // extern "C" void DebugLog(const char* s) {

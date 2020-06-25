@@ -58,6 +58,10 @@
 
 #define DC_BLOCKING_FACTOR                  0.995f
 
+/* Detection threshold for ML classification */
+/* Can be altered to make the system more or less strict when classifying a piece of audio */
+#define DETECTION_THRESHOLD                 0.5f
+
 /* Useful macros */
 
 #define FLASH_LED(led, duration) { \
@@ -269,8 +273,8 @@ static const configSettings_t defaultConfigSettings = {
     .clockDivider = 4,
     .acquisitionCycles = 16,
     .oversampleRate = 1,
-    .sampleRate = 384000,
-    .sampleRateDivider = 8,
+    .sampleRate = 256000,
+    .sampleRateDivider = 16,
     .sleepDuration = 0,
     .recordDuration = 60,
     .enableLED = 1,
@@ -420,7 +424,7 @@ void fillBuffers(){
     /* Initialise file system and open a new file */
 
     while(writeBufferIndex < numberOfSamples){
-        logMsg("Waiting for samples\n");
+        //logMsg("Waiting for samples\n");
         AudioMoth_delay(10);
     }
 
@@ -460,7 +464,18 @@ int main(void) {
         else{logMsg("C compiler only \n");}
 
         fillBuffers();
-        mainloop(buffers[0], NUMBER_OF_SAMPLES_IN_BUFFER, 16000);
+        float detection_probability = ei_classify(buffers[0], NUMBER_OF_SAMPLES_IN_BUFFER, 16000);
+
+        if (detection_probability < DETECTION_THRESHOLD){
+            AudioMoth_setRedLED(true);
+            AudioMoth_delay(100);
+            AudioMoth_setRedLED(false);
+        }
+        else{
+            AudioMoth_setGreenLED(true);
+            AudioMoth_delay(100);
+            AudioMoth_setGreenLED(false);
+        }
 
         AudioMoth_setBothLED(true);
         AudioMoth_delay(100);

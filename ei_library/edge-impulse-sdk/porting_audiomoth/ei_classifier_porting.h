@@ -70,4 +70,8 @@ void ei_printf(const char *format, ...);
  */
 void ei_printf_float(float f);
 
+void ei_printf_force(const char *format, ...);
+
+void ei_printf_force_float(float f);
+
 #endif // _EI_CLASSIFIER_PORTING_H_

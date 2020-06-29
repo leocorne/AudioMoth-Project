@@ -301,6 +301,8 @@ static uint32_t *durationOfNextRecording = (uint32_t*)(AM_BACKUP_DOMAIN_START_AD
 // static configSettings_t *configSettings = (configSettings_t*)(AM_BACKUP_DOMAIN_START_ADDRESS + 12);
 static configSettings_t *configSettings = &defaultConfigSettings;
 
+static uint32_t *inference_count = (uint32_t*)(AM_BACKUP_DOMAIN_START_ADDRESS + 12 + sizeof(configSettings_t));
+
 /* DC filter variables */
 
 static int8_t bitsToShift;
@@ -374,7 +376,6 @@ static void logMsg(char * msg){
 }
 
 static void initialiseLogFile(){
-    AudioMoth_enableFileSystem();
     logMsg(STARTUP_MESSAGE);
 }
 
@@ -430,6 +431,62 @@ void fillBuffers(){
 
 }
 
+/* Save recording to SD card */
+
+void saveBufferContentToFile(){
+
+    logMsg("Saving buffer contents to file \n");
+
+    /* Open a file with the current local time as the name */
+
+    //time_t rawtime = currentTime + configSettings->timezoneHours * SECONDS_IN_HOUR + configSettings->timezoneMinutes * SECONDS_IN_MINUTE;
+
+    //struct tm *time = gmtime(&rawtime);
+
+    //sprintf(fileName, "%04d%02d%02d_%02d%02d%02d.WAV", 1900 + time->tm_year, time->tm_mon + 1, time->tm_mday, time->tm_hour, time->tm_min, time->tm_sec);
+    sprintf(fileName, "det%d.WAV", (*inference_count));
+
+    logMsg(fileName);
+    logMsg("\n");
+
+    /* Calculate recording parameters */
+    uint32_t numberOfSamplesInHeader = sizeof(wavHeader) >> 1;
+    uint32_t numberOfSamples = 16000;
+
+    uint32_t currentTime;
+    AudioMoth_getTime(&currentTime, NULL);
+
+    AM_batteryState_t batteryState = AudioMoth_getBatteryState();
+    bool batteryVoltageLow = false;
+
+    /* Initialise the WAV header */
+
+    setHeaderDetails(configSettings->sampleRate / configSettings->sampleRateDivider, numberOfSamples);
+
+    setHeaderComment(currentTime, configSettings->timezoneHours, configSettings->timezoneMinutes, (uint8_t*)AM_UNIQUE_ID_START_ADDRESS, configSettings->gain, batteryState, batteryVoltageLow, switchPositionChanged);
+
+    logMsg("Ready to write header \n");
+    /* Write the file contents */
+    AudioMoth_appendFile(fileName);
+    AudioMoth_writeToFile(&wavHeader, sizeof(wavHeader));
+    AudioMoth_closeFile();
+
+    logMsg("Wrote header \n");
+
+    AudioMoth_appendFile(fileName);
+    AudioMoth_writeToFile(buffers[0], 2 * numberOfSamples);
+    AudioMoth_closeFile();
+    /* Close the file */
+
+    logMsg("Done saving\n");
+
+
+    /* Return with state */
+
+    return RECORDING_OKAY;
+
+}
+
 /* Main function */
 int main(void) {
 
@@ -445,9 +502,9 @@ int main(void) {
 
     AM_switchPosition_t switchPosition = AudioMoth_getSwitchPosition();
 
-    // if (AudioMoth_isInitialPowerUp()) {
-    //     initialiseHeader();
-    // }
+    if (AudioMoth_isInitialPowerUp()) {
+        *inference_count = 0;
+    }
 
     if (switchPosition == AM_SWITCH_USB) {
 
@@ -458,6 +515,7 @@ int main(void) {
     } else {
 
         /* Set up log file */
+        AudioMoth_enableFileSystem();
         initialiseLogFile();
 
         if(one() == 1){logMsg("C++ compiler working \n");}
@@ -476,6 +534,9 @@ int main(void) {
             AudioMoth_delay(100);
             AudioMoth_setGreenLED(false);
         }
+
+        saveBufferContentToFile();
+        (*inference_count)++ ;
 
         AudioMoth_setBothLED(true);
         AudioMoth_delay(100);

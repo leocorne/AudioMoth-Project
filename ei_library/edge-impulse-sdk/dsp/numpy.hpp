@@ -23,6 +23,7 @@
 #ifndef _EIDSP_NUMPY_H_
 #define _EIDSP_NUMPY_H_
 
+#include "ei_classifier_porting.h"
 #include <stdint.h>
 #include <string.h>
 #include <stddef.h>
@@ -34,7 +35,7 @@
 #include "dct/fast-dct-fft.h"
 #include "kissfft/kiss_fftr.h"
 #if EIDSP_USE_CMSIS_DSP
-#include "edge-impulse-sdk/CMSIS/DSP/Include/arm_math.h"
+#include "arm_math.h"
 #endif
 
 #ifdef __MBED__
@@ -921,14 +922,14 @@ public:
         memset(fft_input.buffer + src_size, 0, (n_fft - src_size) * sizeof(kiss_fft_scalar));
 
 #if EIDSP_USE_CMSIS_DSP
-        if (n_fft != 32 && n_fft != 64 && n_fft != 128 && n_fft != 256 &&
-            n_fft != 512 && n_fft != 1024 && n_fft != 2048 && n_fft != 4096) {
+        if (n_fft != 32 && n_fft != 64 && n_fft != 128 && n_fft != 256) {
             int ret = software_rfft(fft_input.buffer, output, n_fft, n_fft_out_features);
             if (ret != EIDSP_OK) {
                 EIDSP_ERR(ret);
             }
         }
         else {
+            //ei_printf("Doing FFT with length %d", n_fft);
             // hardware acceleration only works for the powers above...
             arm_rfft_fast_instance_f32 rfft_instance;
             arm_status status = arm_rfft_fast_init_f32(&rfft_instance, n_fft);
@@ -1005,14 +1006,14 @@ public:
         }
 
 #if EIDSP_USE_CMSIS_DSP
-        if (n_fft != 32 && n_fft != 64 && n_fft != 128 && n_fft != 256 &&
-            n_fft != 512 && n_fft != 1024 && n_fft != 2048 && n_fft != 4096) {
+        if (n_fft != 32 && n_fft != 64 && n_fft != 128 && n_fft != 256) {
             int ret = software_rfft(fft_input.buffer, output, n_fft, n_fft_out_features);
             if (ret != EIDSP_OK) {
                 EIDSP_ERR(ret);
             }
         }
         else {
+            //ei_printf("Doing FFT with length %d", n_fft);
             // hardware acceleration only works for the powers above...
             arm_rfft_fast_instance_f32 rfft_instance;
             arm_status status = arm_rfft_fast_init_f32(&rfft_instance, n_fft);

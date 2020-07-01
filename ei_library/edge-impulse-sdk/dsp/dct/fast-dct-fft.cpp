@@ -28,9 +28,10 @@
 #include "../returntypes.hpp"
 #include "../numpy.hpp"
 #include "../memory.hpp"
+#include "arm_math.h"
 
 #ifndef M_PI
-#define M_PI 3.14159265358979323846264338327950288
+#define M_PI 3.14159265358979323846264338327950288f
 #endif // M_PI
 
 // DCT type II, unscaled
@@ -70,7 +71,7 @@ int ei::dct::transform(float vector[], size_t len) {
 
 	for (size_t i = 0; i < len / 2 + 1; i++) {
 		float temp = i * M_PI / (len * 2);
-		vector[i] = fft_data_out[i].r * cos(temp) + fft_data_out[i].i * sin(temp);
+		vector[i] = fft_data_out[i].r * arm_cos_f32(temp) + fft_data_out[i].i * arm_sin_f32(temp);
 	}
 
 	ei_dsp_free(fft_data_in, fft_data_in_size);
@@ -115,8 +116,8 @@ int ei::dct::inverse_transform(float vector[], size_t len) {
 
 	for (size_t i = 0; i < len; i++) {
 		float temp = i * M_PI / (len * 2);
-		fft_data_in[i].r = vector[i] * cos(temp);
-		fft_data_in[i].i *= -sin(temp);
+		fft_data_in[i].r = vector[i] * arm_cos_f32(temp);
+		fft_data_in[i].i *= -arm_sin_f32(temp);
 	}
 
 	kiss_fft(cfg, fft_data_in, fft_data_out);

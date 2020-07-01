@@ -375,9 +375,15 @@ public:
         }
 
         if (normalization == DCT_NORMALIZATION_ORTHO) {
-            input[0] = input[0] * sqrt(1.0f / static_cast<float>(4 * N));
+            float sqrt_res;
+
+            arm_sqrt_f32(1.0f / static_cast<float>(4 * N), &sqrt_res);
+
+            input[0] = input[0] * sqrt_res;
+
             for (size_t ix = 1; ix < N; ix++) {
-                input[ix] = input[ix] * sqrt(1.0f / static_cast<float>(2 * N));
+                arm_sqrt_f32(1.0f / static_cast<float>(2 * N), &sqrt_res);
+                input[ix] = input[ix] * sqrt_res;
             }
         }
 
@@ -948,10 +954,11 @@ public:
             output[n_fft_out_features - 1] = fft_output.buffer[1];
 
             size_t fft_output_buffer_ix = 2;
+            const float sqrt2 = 1.414213562373095048801f;
             for (size_t ix = 1; ix < n_fft_out_features - 1; ix += 1) {
                 float rms_result;
                 arm_rms_f32(fft_output.buffer + fft_output_buffer_ix, 2, &rms_result);
-                output[ix] = rms_result * sqrt(2);
+                output[ix] = rms_result * sqrt2;
 
                 fft_output_buffer_ix += 2;
             }
@@ -1229,6 +1236,7 @@ private:
 
     static int software_rfft(float *fft_input, fft_complex_t *output, size_t n_fft, size_t n_fft_out_features)
     {
+        ei_printf("Warning! Software rfft called. (Very slow) - input size %d\n", n_fft);
         // create fftr context
         size_t kiss_fftr_mem_length;
 

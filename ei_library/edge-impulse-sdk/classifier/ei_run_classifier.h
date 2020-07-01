@@ -137,8 +137,8 @@ extern "C" EI_IMPULSE_ERROR run_classifier(
     if (debug) {
         ei_printf("Features (%d ms.): ", result->timing.dsp);
         for (size_t ix = 0; ix < features_matrix.cols; ix++) {
-            ei_printf_float(features_matrix.buffer[ix]);
-            ei_printf(" ");
+            //ei_printf_float(features_matrix.buffer[ix]);
+            //ei_printf(" ");
         }
         ei_printf("\n");
     }

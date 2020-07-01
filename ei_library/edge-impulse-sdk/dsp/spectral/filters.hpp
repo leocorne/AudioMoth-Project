@@ -27,7 +27,7 @@
 #include "../numpy.hpp"
 
 #ifndef M_PI
-#define M_PI 3.14159265358979323846264338327950288
+#define M_PI 3.14159265358979323846264338327950288f
 #endif // M_PI
 
 namespace ei {
@@ -62,7 +62,7 @@ namespace filters {
 
         // Calculate the filter parameters
         for(int ix = 0; ix < n_steps; ix++) {
-            float r = sin(M_PI * ((2.0 * ix) + 1.0) / (2.0 * filter_order));
+            float r = arm_sin_f32(M_PI * ((2.0 * ix) + 1.0) / (2.0 * filter_order));
             sampling_freq = a2 + (2.0 * a * r) + 1.0;
             A[ix] = a2 / sampling_freq;
             d1[ix] = 2.0 * (1 - a2) / sampling_freq;

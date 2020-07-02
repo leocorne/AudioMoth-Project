@@ -304,7 +304,7 @@ namespace processing {
         }
 
         for (size_t ix = 0; ix < out_buffer_size; ix++) {
-            out_buffer[ix] = (1.0 / static_cast<float>(fft_points)) *
+            out_buffer[ix] = (1.0f / static_cast<float>(fft_points)) *
                 (out_buffer[ix] * out_buffer[ix]);
         }
 

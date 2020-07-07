@@ -21,30 +21,30 @@ extern "C" float ei_classify(int16_t* raw_features, int raw_features_size, int s
         float_features[i] = (float)raw_features[i];
     }
 
-    ei_printf_force("Generated float_features \n");
+    //ei_printf_force("Generated float_features \n");
 
     ei_impulse_result_t result;
     signal_t signal;
     
     numpy::signal_from_buffer(&float_features[0], signal_size, &signal);
-    ei_printf_force("Generated signal \n");
+    //ei_printf_force("Generated signal \n");
 
-    EI_IMPULSE_ERROR res = run_classifier(&signal, &result, true);
+    EI_IMPULSE_ERROR res = run_classifier(&signal, &result, false);
 
-    ei_printf_force("run_classifier returned: %d\n", res);
+    //ei_printf_force("run_classifier returned: %d\n", res);
 
     //ei_printf_force("Begin output\n");
 
     // print the predictions
     //ei_printf_force("[");
-    for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
+    //for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
         //ei_printf_force_float(result.classification[ix].value);
 
         //if (EI_CLASSIFIER_HAS_ANOMALY == 1) ei_printf_force(", ");
         //else if (ix != EI_CLASSIFIER_LABEL_COUNT - 1) ei_printf_force(", ");
-    }
+    //}
 
-    if (EI_CLASSIFIER_HAS_ANOMALY == 1) ei_printf_force_float(result.anomaly);
+    //if (EI_CLASSIFIER_HAS_ANOMALY == 1) ei_printf_force_float(result.anomaly);
 
     //ei_printf_force("]\n");
 

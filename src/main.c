@@ -19,6 +19,10 @@
 #include "source/ei_main_loop.h"
 #define STARTUP_MESSAGE                     "Loop started\n"
 #define DETECTION_THRESHOLD                 0.5f
+#define EI_SIGNAL_LENGTH                    16000
+
+float detection_probabilities[10];
+int ind = 0;
 
 /* Useful time constants */
 
@@ -634,6 +638,22 @@ static void logMsg(char * msg){
     AudioMoth_closeFile(); 
 }
 
+static void logFloat(float f) {
+    char str[100];
+    char *tmpSign = (f < 0) ? "-" : "";
+    float tmpVal = (f < 0) ? -f : f;
+
+    int tmpInt1 = tmpVal;                  // Get the integer.
+    float tmpFrac = tmpVal - tmpInt1;      // Get fraction.
+    int tmpInt2 = (int)(tmpFrac * 10000);  // Turn into integer.
+
+    // Print as parts, note that you need 0-padding for fractional bit.
+
+    sprintf(str, "%s%d.%04d\n", tmpSign, tmpInt1, tmpInt2);
+
+    logMsg(str);
+}
+
 static void initialiseLogFile(){
     AudioMoth_enableFileSystem();
     logMsg(STARTUP_MESSAGE);
@@ -976,8 +996,12 @@ int main(void) {
                 if (fileSystemEnabled)  {
 
                     recordingState = makeRecording(currentTime, *durationOfNextRecording, enableLED, extendedBatteryState, temperature);
-                    float detection_probability = ei_classify(buffers[0], NUMBER_OF_SAMPLES_IN_BUFFER, 16000, (float*) EI_SRAM_START_ADDRESS);
-                    logMsg("Ran model OK \n");
+                    
+                    //detection_probabilities[ind++ % 10] = detection_probability;
+                    //logFloat(detection_probability);
+                    // for (int i = 0; i < 10; i++){
+                    //     logFloat(detection_probabilities[i]);
+                    // }
 
                 } else {
 
@@ -1300,6 +1324,10 @@ static AM_recordingState_t makeRecording(uint32_t currentTime, uint32_t recordDu
 
     uint32_t totalNumberOfCompressedSamples = 0;
 
+    uint32_t bufferToClassify = 0;
+    
+    bool bufferMovementTooFast = false;
+
     /* Ensure main loop doesn't start if the last buffer is currently being written to */
 
     while (writeBuffer == NUMBER_OF_BUFFERS - 1) { }
@@ -1313,6 +1341,10 @@ static AM_recordingState_t makeRecording(uint32_t currentTime, uint32_t recordDu
             /* Write the appropriate number of bytes to the SD card */
 
             uint32_t numberOfSamplesToWrite = MIN(numberOfSamples + numberOfSamplesInHeader - samplesWritten, NUMBER_OF_SAMPLES_IN_BUFFER);
+
+            AudioMoth_setGreenLED(true);
+            float detection_probability = ei_classify(buffers[readBuffer], NUMBER_OF_SAMPLES_IN_BUFFER, EI_SIGNAL_LENGTH, (float*) EI_SRAM_START_ADDRESS);
+            AudioMoth_setGreenLED(false);
 
             if (!writeIndicator[readBuffer] && buffersProcessed > 0 && numberOfSamplesToWrite == NUMBER_OF_SAMPLES_IN_BUFFER) {
 
@@ -1372,6 +1404,8 @@ static AM_recordingState_t makeRecording(uint32_t currentTime, uint32_t recordDu
 
     }
 
+
+
     /* Write the compression buffer files at the end */
 
     if (samplesWritten < numberOfSamples + numberOfSamplesInHeader && numberOfCompressedBuffers > 0) {
@@ -1413,6 +1447,10 @@ static AM_recordingState_t makeRecording(uint32_t currentTime, uint32_t recordDu
     /* Close the file */
 
     FLASH_LED_AND_RETURN_ON_ERROR(AudioMoth_closeFile());
+
+    if (bufferMovementTooFast){
+        logMsg("Buffer movement too fast, some buffers will be incorrect \n");
+    }
 
     AudioMoth_setRedLED(false);
 

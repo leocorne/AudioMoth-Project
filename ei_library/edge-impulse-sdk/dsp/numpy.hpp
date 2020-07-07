@@ -911,6 +911,7 @@ public:
      * @returns 0 if OK
      */
     static int rfft(const float *src, size_t src_size, float *output, size_t output_size, size_t n_fft) {
+        
         size_t n_fft_out_features = (n_fft / 2) + 1;
         if (output_size != n_fft_out_features) {
             EIDSP_ERR(EIDSP_BUFFER_SIZE_MISMATCH);
@@ -934,19 +935,21 @@ public:
 
 #if EIDSP_USE_CMSIS_DSP
         if (n_fft != 32 && n_fft != 256) {
+            //ei_printf("Slow FFT of length %d \n", n_fft);
             int ret = software_rfft(fft_input.buffer, output, n_fft, n_fft_out_features);
             if (ret != EIDSP_OK) {
                 EIDSP_ERR(ret);
             }
         }
         else {
-            //ei_printf("Doing FFT with length %d", n_fft);
+            //ei_printf("Doing FFT with length %d \n", n_fft);
             // hardware acceleration only works for the powers above...
 
             if (n_fft == 32){
                 if (!initialized_32){
-                    arm_status status = arm_rfft_fast_init_f32(&rfft_instance_32, n_fft);
+                    arm_status status = arm_rfft_fast_init_f32(&rfft_instance_32, 32u);
                     if (status != ARM_MATH_SUCCESS) {
+                        ei_printf("Init 32 failed \n");
                         return status;
                     }
                     initialized_32 = true;
@@ -954,20 +957,21 @@ public:
             }
             else if (n_fft == 256){
                 if (!initialized_256){
-                    arm_status status = arm_rfft_fast_init_f32(&rfft_instance_256, n_fft);
+                    arm_status status = arm_rfft_fast_init_f32(&rfft_instance_256, 256u);
                     if (status != ARM_MATH_SUCCESS) {
+                        ei_printf("Init 256 failed (status %d) \n", status);
                         return status;
                     }
                     initialized_256 = true;
                 }
             }
-            
+            //ei_printf("FFT init was OK \n");
 
             EI_DSP_MATRIX(fft_output, 1, n_fft);
             if (!fft_output.buffer) {
                 EIDSP_ERR(EIDSP_OUT_OF_MEM);
             }
-
+            //ei_printf("Not out of memory \n");
             if (n_fft == 32){
                 arm_rfft_fast_f32(&rfft_instance_32, fft_input.buffer, fft_output.buffer, 0);
             }
@@ -975,6 +979,7 @@ public:
                 arm_rfft_fast_f32(&rfft_instance_256, fft_input.buffer, fft_output.buffer, 0);
             }
 
+            //ei_printf("FFT done \n");
             output[0] = fft_output.buffer[0];
             output[n_fft_out_features - 1] = fft_output.buffer[1];
 
@@ -987,6 +992,8 @@ public:
 
                 fft_output_buffer_ix += 2;
             }
+
+            //ei_printf("FFT postprocessing done \n");
         }
 #else
         int ret = software_rfft(fft_input.buffer, output, n_fft, n_fft_out_features);

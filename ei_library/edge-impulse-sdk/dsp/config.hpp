@@ -55,7 +55,8 @@
 
 #if EIDSP_USE_ASSERTS == 1
 #include <assert.h>
-#define EIDSP_ERR(err_code) printf("ERR: %d (%s)\n", err_code, #err_code); assert(false)
+#include "ei_classifier_porting.h"
+#define EIDSP_ERR(err_code) ei_printf("ERR: %d (%s)\n", err_code, #err_code); assert(false)
 #else // EIDSP_USE_ASSERTS == 0
 #define EIDSP_ERR(err_code) return(err_code)
 #endif

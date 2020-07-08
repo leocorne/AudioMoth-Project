@@ -6,6 +6,11 @@ extern "C" {
 
 float ei_classify(int16_t* raw_features, int raw_features_size, int signal_size, float* signal_start_address);
 
+
+void makeProbArray();
+void printProbArray();
+float * getProbArray();
+
 #ifdef __cplusplus
 }
 #endif

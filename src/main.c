@@ -23,6 +23,7 @@
 
 float detection_probabilities[10];
 int ind = 0;
+bool filterUnwantedSounds = true;
 
 /* Useful time constants */
 
@@ -994,14 +995,12 @@ int main(void) {
                 if (!fileSystemEnabled) fileSystemEnabled = AudioMoth_enableFileSystem();
 
                 if (fileSystemEnabled)  {
+                    
+                    makeProbArray();
 
                     recordingState = makeRecording(currentTime, *durationOfNextRecording, enableLED, extendedBatteryState, temperature);
                     
-                    //detection_probabilities[ind++ % 10] = detection_probability;
-                    //logFloat(detection_probability);
-                    // for (int i = 0; i < 10; i++){
-                    //     logFloat(detection_probabilities[i]);
-                    // }
+                    printProbArray();
 
                 } else {
 
@@ -1295,7 +1294,7 @@ static AM_recordingState_t makeRecording(uint32_t currentTime, uint32_t recordDu
 
     //uint32_t length = sprintf(fileName, "%04d%02d%02d_%02d%02d%02d", 1900 + time->tm_year, time->tm_mon + 1, time->tm_mday, time->tm_hour, time->tm_min, time->tm_sec);
     
-    uint32_t length = sprintf(fileName, "det%d", (*inference_count));
+    uint32_t length = sprintf(fileName, "rec%d", (*inference_count));
     char *extension = configSettings->amplitudeThreshold > 0 ? "T.WAV" : ".WAV";
 
     (*inference_count)++;
@@ -1324,10 +1323,6 @@ static AM_recordingState_t makeRecording(uint32_t currentTime, uint32_t recordDu
 
     uint32_t totalNumberOfCompressedSamples = 0;
 
-    uint32_t bufferToClassify = 0;
-    
-    bool bufferMovementTooFast = false;
-
     /* Ensure main loop doesn't start if the last buffer is currently being written to */
 
     while (writeBuffer == NUMBER_OF_BUFFERS - 1) { }
@@ -1345,6 +1340,11 @@ static AM_recordingState_t makeRecording(uint32_t currentTime, uint32_t recordDu
             AudioMoth_setGreenLED(true);
             float detection_probability = ei_classify(buffers[readBuffer], NUMBER_OF_SAMPLES_IN_BUFFER, EI_SIGNAL_LENGTH, (float*) EI_SRAM_START_ADDRESS);
             AudioMoth_setGreenLED(false);
+
+            if (filterUnwantedSounds){
+                bool ei_keyword_detected = (detection_probability > DETECTION_THRESHOLD);
+                writeIndicator[readBuffer] &= ei_keyword_detected;
+            }
 
             if (!writeIndicator[readBuffer] && buffersProcessed > 0 && numberOfSamplesToWrite == NUMBER_OF_SAMPLES_IN_BUFFER) {
 
@@ -1447,10 +1447,6 @@ static AM_recordingState_t makeRecording(uint32_t currentTime, uint32_t recordDu
     /* Close the file */
 
     FLASH_LED_AND_RETURN_ON_ERROR(AudioMoth_closeFile());
-
-    if (bufferMovementTooFast){
-        logMsg("Buffer movement too fast, some buffers will be incorrect \n");
-    }
 
     AudioMoth_setRedLED(false);
 

@@ -10,6 +10,33 @@
 // We keep track of this with this variable
 #define INTERESTING_SOUND_INDEX              0
 
+// This must be a constant as we can't instantiate an array with variable size.
+// TODO: Find a way to make this variable so it can work with any recording length.
+// Alternative: make this very long and ignore the last values if not needed (but wastes space)
+#define RECORDING_LENGTH_IN_BUFFERS          10                   
+
+float prob_array[RECORDING_LENGTH_IN_BUFFERS];
+int prob_index;
+
+extern "C" void makeProbArray(){
+    prob_index = 0;
+    //prob_array = {};
+}
+
+extern "C" void printProbArray(){
+    ei_printf_force("[");
+    for (size_t ix = 0; ix < prob_index; ix++) {
+        ei_printf_force_float(prob_array[ix]);
+
+        if (ix != prob_index - 1) ei_printf_force(", ");
+    }
+    ei_printf_force("]\n");
+}
+
+extern "C" float * getProbArray(){
+    return prob_array;
+}
+
 extern "C" float ei_classify(int16_t* raw_features, int raw_features_size, int signal_size, float* signal_start_address){
 
     // Convert raw inputs to float as this is what the Edge Impulse model takes in.
@@ -50,6 +77,10 @@ extern "C" float ei_classify(int16_t* raw_features, int raw_features_size, int s
 
     //ei_printf_force("End output\n");
 
-    // Finally return the probability of having spotted the wanted sound to the AudioMoth system 
-    return result.classification[INTERESTING_SOUND_INDEX].value;
+    // Finally return the probability of having spotted the wanted sound to the AudioMoth system
+
+    float detection_prob = result.classification[INTERESTING_SOUND_INDEX].value;
+
+    prob_array[prob_index++] = detection_prob;
+    return detection_prob;
 }

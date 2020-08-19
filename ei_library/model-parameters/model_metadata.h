@@ -28,22 +28,27 @@
 
 #define EI_CLASSIFIER_SENSOR_MICROPHONE          1
 #define EI_CLASSIFIER_SENSOR_ACCELEROMETER       2
+#define EI_CLASSIFIER_SENSOR_CAMERA              3
 
 #define EI_CLASSIFIER_NN_INPUT_FRAME_SIZE        637
 #define EI_CLASSIFIER_RAW_SAMPLE_COUNT           16000
 #define EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME      1
 #define EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE       (EI_CLASSIFIER_RAW_SAMPLE_COUNT * EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME)
+#define EI_CLASSIFIER_INPUT_WIDTH                0
+#define EI_CLASSIFIER_INPUT_HEIGHT               0
 #define EI_CLASSIFIER_INTERVAL_MS                0.0625
-#define EI_CLASSIFIER_OUT_TENSOR_NAME            "y_pred/Identity:0"
+#define EI_CLASSIFIER_OUT_TENSOR_NAME            "y_pred_1/Identity:0"
 #define EI_CLASSIFIER_LABEL_COUNT                2
 #define EI_CLASSIFIER_HAS_ANOMALY                0
 #define EI_CLASSIFIER_FREQUENCY                  16000
-#define EI_CLASSIFIER_TFLITE_ARENA_SIZE          13498
+#define EI_CLASSIFIER_TFLITE_ARENA_SIZE          10432
 #define EI_CLASSIFIER_INFERENCING_ENGINE         EI_CLASSIFIER_TFLITE
 #define EI_CLASSIFIER_SENSOR                     EI_CLASSIFIER_SENSOR_MICROPHONE
 #define EI_CLASSIFIER_HAS_TFLITE_OPS_RESOLVER    1
+#define EI_CLASSIFIER_SLICE_SIZE                 (EI_CLASSIFIER_RAW_SAMPLE_COUNT / EI_CLASSIFIER_SLICES_PER_MODEL_WINDOW)
+#define EI_CLASSIFIER_SLICES_PER_MODEL_WINDOW    4
 
-const char* ei_classifier_inferencing_categories[] = { "faucet", "noise" };
+const char* ei_classifier_inferencing_categories[] = { "background", "coqui" };
 
 typedef struct {
     int axes;
@@ -52,13 +57,14 @@ typedef struct {
     bool minimum;
     bool maximum;
     bool rms;
+    bool stdev;
+    bool skewness;
+    bool kurtosis;
 } ei_dsp_config_flatten_t;
 
 typedef struct {
     int axes;
     const char * channels;
-    int width;
-    int height;
 } ei_dsp_config_image_t;
 
 typedef struct {
@@ -92,7 +98,7 @@ typedef struct {
     const char * spectral_power_edges;
 } ei_dsp_config_spectral_analysis_t;
 
-ei_dsp_config_mfcc_t ei_dsp_config_3 = {
+ei_dsp_config_mfcc_t ei_dsp_config_87 = {
     1,
     13,
     0.02000f,

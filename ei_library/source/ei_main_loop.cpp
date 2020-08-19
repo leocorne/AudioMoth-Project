@@ -8,7 +8,7 @@
 
 // Depending on how the EI model was trained, the "interesting word" might be at index 0 or 1
 // We keep track of this with this variable
-#define INTERESTING_SOUND_INDEX              0
+#define INTERESTING_SOUND_INDEX              1
 
 // This must be a constant as we can't instantiate an array with variable size.
 // TODO: Find a way to make this variable so it can work with any recording length.

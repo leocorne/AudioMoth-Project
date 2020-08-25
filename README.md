@@ -1,5 +1,5 @@
 # AudioMoth-Project #
-A minimal project on which all AudioMoth firmware can be built.
+A modified version of the AudioMoth standard firmware. This software performs live classification of samples using a neural network and saves audio clips containing a specific sound. The neural network here is trained to detect [coquí frog](https://freesound.org/people/tombenedict/sounds/397998/) sounds.
 
 ### Usage ###
 

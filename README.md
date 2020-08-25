@@ -7,9 +7,9 @@ Clone this project and compile it similarly to the example [AudioMoth project](h
 To change the sound the NN detects, train a different neural network on the [Edge Impulse platform](https://edgeimpulse.com/). Go to the "Deployment" tab, build the C++ library, and download the ZIP file. 
 
 Then replace the following files on the ei_library folder by the files from the ZIP file generated:
-model-parameters/dsp_blocks.h
-model-parameters/model_metadata.h
-tflite-model/tflite-trained.h
+- model-parameters/dsp_blocks.h
+- model-parameters/model_metadata.h
+- tflite-model/tflite-trained.h
 
 Compile the project on Simplicity Studio and upload to AudioMoth.
 

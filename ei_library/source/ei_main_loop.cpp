@@ -20,7 +20,6 @@ int prob_index;
 
 extern "C" void makeProbArray(){
     prob_index = 0;
-    //prob_array = {};
 }
 
 extern "C" void printProbArray(){

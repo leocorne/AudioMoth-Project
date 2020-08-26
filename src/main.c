@@ -1140,9 +1140,9 @@ static AM_recordingState_t makeRecording(uint32_t currentTime, uint32_t recordDu
 
             uint32_t numberOfSamplesToWrite = MIN(numberOfSamples + numberOfSamplesInHeader - samplesWritten, NUMBER_OF_SAMPLES_IN_BUFFER);
 
-            AudioMoth_setGreenLED(true);
+            if (enableLED) AudioMoth_setGreenLED(true);
             float detection_probability = ei_classify(buffers[readBuffer], NUMBER_OF_SAMPLES_IN_BUFFER, EI_SIGNAL_LENGTH, (float*) EI_SRAM_START_ADDRESS);
-            AudioMoth_setGreenLED(false);
+            if (enableLED) AudioMoth_setGreenLED(false);
 
             if (filterUnwantedSounds){
                 bool ei_keyword_detected = (detection_probability > DETECTION_THRESHOLD);
@@ -1174,12 +1174,13 @@ static AM_recordingState_t makeRecording(uint32_t currentTime, uint32_t recordDu
                 }
 
                 /* Write the buffer */
-
-                FLASH_LED_AND_RETURN_ON_ERROR(AudioMoth_writeToFile(buffers[readBuffer], NUMBER_OF_BYTES_IN_SAMPLE * numberOfSamplesToWrite));
+                if (writeIndicator[readBuffer]){
+                    FLASH_LED_AND_RETURN_ON_ERROR(AudioMoth_writeToFile(buffers[readBuffer], NUMBER_OF_BYTES_IN_SAMPLE * numberOfSamplesToWrite));
+                }
+                
 
                 /* Clear LED */
-
-                AudioMoth_setRedLED(false);
+                if (enableLED) AudioMoth_setRedLED(false);
 
             }
 
